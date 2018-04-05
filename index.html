@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>雜物聚集地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="工作上的筆記">
+<meta property="og:type" content="website">
+<meta property="og:title" content="雜物聚集地">
+<meta property="og:url" content="http://hsienwei.github.io/index.html">
+<meta property="og:site_name" content="雜物聚集地">
+<meta property="og:description" content="工作上的筆記">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="雜物聚集地">
+<meta name="twitter:description" content="工作上的筆記">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-7748617-3', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo logo-text" href="/">雜物聚集地</a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/atom.xml">Feed</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://hsienwei.github.io"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+    <section id="main" class="outer">
+      <article id="post-python-selenium使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/20/python-selenium使用/">使用python + selenium 心得</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/03/20/python-selenium使用/" class="article-date">
+  <time datetime="2018-03-20T06:05:00.000Z" itemprop="datePublished">2018-03-20</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/03/20/python-selenium使用/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近寫了一個幫助自己解決一個煩人雜事的小程式<a href="https://gist.github.com/hsienwei/233b85fbcccc47b23f27266317c6dfce" target="_blank" rel="external">gist連結</a></p>
+<p>這支程式主要工作如下：<br>登入公司的jira, 從手上的issue中找出指定符合父issue ID的所有issue, 統一填上註解並轉給指定的人。<br>寫的比較匆忙沒有加太多的例外判定, 目標是快速解決手邊的雜事。</p>
+<p>之所以選擇<a href="http://selenium-python.readthedocs.io/" target="_blank" rel="external">selenium</a>主要還是看上他可以省去很多功, 以前寫的爬蟲主要還是使用mechanize + BeautifulSoup, 但是遇到js就會很麻煩, 後來使用selenium不只js部分的問題沒有了, 連BeautifulSoup都不需要了, 他的find方法已經足夠我使用。</p>
+<p>事前selenium module的安裝就不提, 要注意的是webdriver供許多瀏覽器版本可以用, 我用的是chrome, 必須要事前下載 <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank" rel="external">chromedriver</a> 使用, 並在使用時設置路徑, 如<code>webdriver.Chrome(executable_path=r&#39;.\\chromedriver.exe&#39;)</code> 。</p>
+<p>這支程式主要使用selenium幾個功能：</p>
+<h3 id="find">find</h3><p><a href="http://selenium-python.readthedocs.io/locating-elements.html" target="_blank" rel="external">api</a><br>selenium 提供了一系列的方法讓你去找到目標元件, 基本上都如同api所列的一樣, 你可以依照條件使用特定id或者class來查找, 唯獨比較特別的是如果id或class中間有空格的最好還是使用 <code>find_element_by_xpath</code> ,之前沒有看過XPath所以花了一點時間才清楚使用方法。</p>
+<p>基本上消耗最多時間還是在翻網頁原始碼找特定元素的id或class, 找到後基本上都不會有太大的問題, </p>
+<h3 id="action">action</h3><p>找到元素後可以做一些行為, 這裡比較常用的有</p>
+<ul>
+<li>click: 模擬點擊行為, 主要用在<code>a</code>跟<code>button</code></li>
+<li>send_keys: 輸入的行為, 主要用在<code>input</code></li>
+<li>submit: form的提交行為</li>
+</ul>
+<h3 id="wait">wait</h3><p>有時候在進行一些動作後, 需要等待特定元件出現才可以進行下一個動作, 此時就需要用wait功能, 這裡有<a href="https://huilansame.github.io/huilansame.github.io/archivers/sleep-implicitlywait-wait" target="_blank" rel="external">一篇文章</a>提到使用方法, 寫的很詳細。</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/selenium/">selenium</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-ngui-atlas-to-spritesheet" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/05/ngui-atlas-to-spritesheet/">轉換NGUI atlas到UGUI的spritesheet</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/03/05/ngui-atlas-to-spritesheet/" class="article-date">
+  <time datetime="2018-03-05T02:48:35.000Z" itemprop="datePublished">2018-03-05</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/03/05/ngui-atlas-to-spritesheet/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近嘗試將一些效能消耗較大的NGUI UI轉換成UGUI測試, 不過目前暫時是自行測試, 所以在圖集部分暫時沿用以前的NGUI atlas來使用, 只是UGUI是不吃NGUI的atlas只吃sprite, 所以寫了一個工具來將NGUI的atlas資料寫到Texture的設定當中。</p>
+<p><a href="https://gist.github.com/hsienwei/1b76d6dfb43e281394e2cab07e331a7b" target="_blank" rel="external">連結在此</a>    </p>
+<p>最主要是要把讀取到SpriteData的y軸做額外的反轉處理.</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NGUI/">NGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UGUI/">UGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-struct-between-native-c" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/07/struct-between-native-c/">c++與c＃間的溝通與資料傳遞</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/02/07/struct-between-native-c/" class="article-date">
+  <time datetime="2018-02-07T02:55:29.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/02/07/struct-between-native-c/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>目前的專案server端與client端間的共用邏輯是用C++寫的, 而Unity的主要使用程式碼又是c#, 所以有需要從c#呼叫c++端的方法, 以及從c++取資料, 這裡主要整理一下專案用的方法以及遇到的一些問題。<br>
+        
+          <p class="article-more-link">
+            <a href="/2018/02/07/struct-between-native-c/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mono/">mono</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-LeanTouch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/24/LeanTouch/">LeanTouch 方便的手勢控制plugin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/01/24/LeanTouch/" class="article-date">
+  <time datetime="2018-01-24T05:51:10.000Z" itemprop="datePublished">2018-01-24</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/01/24/LeanTouch/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://www.assetstore.unity3d.com/#!/content/30111" target="_blank" rel="external">Asset Store Link</a>  </p>
+<p>一開始專案在處理手勢的部份大多是自行處理, 以Unity的狀況來說如果是單指點擊來說寫起來沒有什麼大問題, 但後來專案中有需要處理Pinch與Twist兩種手勢, 一旦進入需要兩隻手指以上的手勢就開始麻煩了, 主要還是因為PC開發環境在多指的行為上需要自行模擬, 以及可能需要用執行環境來判斷來做不同的處理.</p>
+<pre><code><span class="preprocessor">#<span class="keyword">if</span> UNITY_EDITOR</span>
+    <span class="keyword">if</span> (Input.GetAxis(<span class="string">"Mouse ScrollWheel"</span>) != <span class="number">0</span>)
+    {
+        ...
+    }
+<span class="preprocessor">#<span class="keyword">elif</span> UNITY_ANDROID || UNITY_IOS</span>
+    <span class="keyword">if</span> (Input.touchCount == <span class="number">2</span>)
+    {
+        ...
+    }
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+</code></pre><p>一開始的作法是用替代的方式來取代, 比方說PC端用滑鼠滾輪來取代Twist, 但是用久了感覺不是很直覺, 而且維護起來確實比較麻煩, 要抓真實的感覺需要編譯apk至手機上測試, 於是之後就改用這個套件。</p>
+<p>這個套件對我的好處主要在於可以省略多平台的一些實作細節, 而且在PC端就可以模擬Pinch與Twist手勢（可選擇組合鍵）, 測試起來比較方便。<br><img src="/2018/01/24/LeanTouch/1.png" alt="[組件設置]" title="[組件設置]"></p>
+<p>事件提供了以下幾種</p>
+<pre><code>LeanTouch<span class="class">.OnFingerDown</span>  
+LeanTouch<span class="class">.OnFingerSet</span>   
+LeanTouch<span class="class">.OnFingerUp</span>    
+LeanTouch<span class="class">.OnFingerTap</span>   
+LeanTouch<span class="class">.OnFingerSwipe</span> 
+LeanTouch<span class="class">.OnGesture</span>     
+</code></pre><p>除了前幾個基本的事件以外, 也可以用LeanTouch.OnGesture來處理複雜的手勢,另外也提供了相關的取值方法：</p>
+<pre><code>LeanGesture<span class="class">.GetTwistDegrees</span>
+LeanGesture<span class="class">.GetPinchScale</span>
+LeanGesture.GetScreenDelta
+</code></pre><p>不用再去計算一些細節比方說pinch兩指間移動的量之類的。</p>
+<p>看一些文章有提到該套件有一些組件可以提供一些預設行為可供套用, 雖然沒有用到但感覺也是挺方便的。</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeanTouch/">LeanTouch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
+      <article id="post-UnityEngineAnalyzerTest" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/12/UnityEngineAnalyzerTest/">UnityEngineAnalyzer測試記錄</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2017/07/12/UnityEngineAnalyzerTest/" class="article-date">
+  <time datetime="2017-07-12T02:16:55.000Z" itemprop="datePublished">2017-07-12</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2017/07/12/UnityEngineAnalyzerTest/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今年不同場合的Unity研討會好像都有提到Unity腳本靜態分析的分享，所以心血來潮測試一下Unity Engine Analyzer。  </p>
+<ol>
+<li><p>官方說安裝可以透過NnGet Package Manager搜索來找到，但是就我的狀況直接找是找不到的。<br>因為我的vs2015內建的是<a href="https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/" target="_blank" rel="external">https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/</a> 這個source<br>需要的話連到<a href="https://www.nuget.org/" target="_blank" rel="external">NuGet首頁</a>可以看到下面有寫新的URL <a href="https://api.nuget.org/v3/index.json" target="_blank" rel="external">https://api.nuget.org/v3/index.json</a><br>改用這個就可以找的到了。  </p>
+</li>
+<li><p>unity專案裡面一般會有三個: 一般, Editor, plugins，然而測試的時候安裝好像不會全部都幫你加上analyzer, 只會在其中的一個加上（我找不到他的邏輯）。<br>要在其他專案中加入的話, 只需要自行增加analyzer, 選擇ProjectPath\packages\UnityEngineAnalyzer.1.0.0.0\analyzers\dotnet\cs\UnityEngineAnalyzer.dll 就會加入了。</p>
+</li>
+<li><p>目前提供9種檢查, 主要是不要使用一些耗效能的方法, 刪除空的方法, 避免使用coroutines這類的檢查, 有需要可以自己擴充。</p>
+</li>
+</ol>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/">Unity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UnityEngineAnalyzer/">UnityEngineAnalyzer</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
+      <nav id="page-nav">
+        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+      </nav>
+    </section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Hsien-Wei Hsiang&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+<script>
+  var disqus_shortname = 'hsienwei';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+  </div>
+</body>
+</html>
