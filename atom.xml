@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://hsienwei.github.io/"/>
-  <updated>2018-04-05T07:32:46.247Z</updated>
+  <updated>2018-07-07T16:27:33.655Z</updated>
   <id>http://hsienwei.github.io/</id>
   
   <author>
@@ -13,6 +13,47 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[AWS Lambda + LineBot]]></title>
+    <link href="http://hsienwei.github.io/2018/07/07/LineBotWithLambda/"/>
+    <id>http://hsienwei.github.io/2018/07/07/LineBotWithLambda/</id>
+    <published>2018-07-07T07:00:18.000Z</published>
+    <updated>2018-07-07T16:27:33.655Z</updated>
+    <content type="html"><![CDATA[<p>這篇主要紀錄一下之前寫的一個小玩具<br>主要是分為兩個部分</p>
+<ul>
+<li>使用Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</li>
+<li>使用LintBot api加上AWS lambda回應上一步存在DynamoDB中的資料</li>
+</ul>
+<hr>
+<p>第一部分是Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</p>
+<p>這裡主要是改以前寫的一個爬蟲程式, 以前寫的時候那時用的是python2.7版本並使用Mechanize 與 BeautifulSoup, 最近把它改成python3以及selenium<a href="https://github.com/hsienwei/ptt_data_parse" target="_blank" rel="external">連結</a>, 目前還會有一些舊的程式碼在裡面。</p>
+<p>程式可以指定要對哪個版來爬資料, 並可以指定要幾小時內的資料, 目前針對推文數高於一定程度以上的文章，另外使用<a href="https://developers.facebook.com/docs/graph-api/reference/v2.11/url" target="_blank" rel="external">FB API</a>去取該連結的互動狀況, 用該資料簡單去算一個分數(可以在下面的測試結果畫面看到)用來作為熱門文章的排序, 這個數字的好處是可以看到實際在FB的熱門狀況, 因為有時候PTT推文數高的文章不一定是值得分享的文章, 也有可能是閒聊文。</p>
+<p>另一part是將得到的資料寫進 AWS 的DynamoDB當中, <a href="https://github.com/hsienwei/ptt_data_parse/blob/master/dynamodb_conn.py" target="_blank" rel="external">程式碼在這</a>，會使用DynamoDB的原因主要是因為我的AWS 免費已經過期了, 所以我選擇使用目前還是有免費方案的DynamoDB。</p>
+<p>主要使用了兩張表, 一張是索引, 主要紀錄各個板對應到另一張表的資料ID，另一張表就是爬下來的資料，以版名以及爬資料的時間當作ID來儲存。</p>
+<hr>
+<p>第二部分是使用LintBot api加上AWS lambda回應上一步存在DynamoDB中的資料</p>
+<p>會使用lambda其實是一個湊巧, 一開始本來是要開一個EC2加上Nodejs或Python+flask來回應linebot webhook, 但是想一想我已經沒有免費Tier了, 作為一個小玩具成本有點高, 後來在查資料的時候看到<a href="https://blog.5000164.jp/2017/8/14/line-bot/" target="_blank" rel="external">這篇文章</a>, 覺得這樣server less的架構成本低, 又不需要一直開著, 也可以使用API Gateway來開一個https的api當作webhook。</p>
+<p>這裡當初在做的時候本來要讓linebot在資料有更新時自動使用push來通知使用者, 但是由於push功能需要付費, 所以就作罷了。</p>
+<hr>
+<p>下面就是成果<br><img src="https://qr-official.line.me/M/OkcTs6-FJF.png" alt="LineBot QRCode"><br>可以加入這個LineBot來測試</p>
+<p>以下是測試結果畫面<br>第一張圖, 隨便打幾個字可以得到目前有資料的版名<br><img src="https://i.imgur.com/I5ZyIf1.jpg?2" alt="Imgur"></p>
+<p>第二張圖, 輸入一個有資料的版名後, 可以得到爬蟲爬到的資料, 標題後是其分數<br><img src="https://i.imgur.com/6z3z8QK.jpg?2" alt="Imgur"></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>這篇主要紀錄一下之前寫的一個小玩具<br>主要是分為兩個部分</p>
+<ul>
+<li>使用Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</li>
+<li>使用LintBot api加上AWS lambda回應上一步存在Dyna]]>
+    </summary>
+    
+      <category term="AWS" scheme="http://hsienwei.github.io/tags/AWS/"/>
+    
+      <category term="LineBot" scheme="http://hsienwei.github.io/tags/LineBot/"/>
+    
+      <category term="python" scheme="http://hsienwei.github.io/tags/python/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[使用python + selenium 心得]]></title>
@@ -745,37 +786,6 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <![CDATA[<p>相較於Crittercism<br>Crashlytics專注於crash的記錄與統計<br>且目前為免費使用（2014/6/6）  </p>
 <p>要申請Crashlytics帳號必須先在<a href="http://try.crashlytics.com/留下你的資料]]>
     </summary>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[自製2048 for Chromecast]]></title>
-    <link href="http://hsienwei.github.io/2014/05/19/%E8%87%AA%E8%A3%BD2048-for-Chromecast/"/>
-    <id>http://hsienwei.github.io/2014/05/19/自製2048-for-Chromecast/</id>
-    <published>2014-05-19T03:20:49.000Z</published>
-    <updated>2017-05-25T15:33:26.461Z</updated>
-    <content type="html"><![CDATA[<p>近日在看Chromecast的相關文件，發現他可以自己做receiver app<br>receiver app是以HTML5來製作  但由於有一些效能限制 所以製作時需要注意<br>詳情可參考 <a href="https://developers.google.com/cast/docs/ux_guidelines#considerations" target="_blank" rel="external">https://developers.google.com/cast/docs/ux_guidelines#considerations</a><br>只要符合條件  基本上也是可以做遊戲的<br>剛好最近很紅的2048是開源的  所以就以它來當作例子<br>其實2048已經有人移植到chromecast上了<br>但反正是要做一個測驗所以無所謂</p>
-<p>以下是實際成品的聯結<br>Chrome: <a href="https://dl.dropboxusercontent.com/u/10581994/chromecast_test/index.html" target="_blank" rel="external">https://dl.dropboxusercontent.com/u/10581994/chromecast_test/index.html</a><br>Android(4.0以上): <a href="https://dl.dropboxusercontent.com/u/10581994/chromecast_test/2048ForChromecast.apk" target="_blank" rel="external">https://dl.dropboxusercontent.com/u/10581994/chromecast_test/2048ForChromecast.apk</a></p>
-<p>其實做起來並不難，主要分為兩個部分(receiver and sender)，基本API的用法就不贅述，可以看<br><a href="https://developers.google.com/cast/docs/developers" target="_blank" rel="external">https://developers.google.com/cast/docs/developers</a>  及 <a href="https://github.com/googlecast/" target="_blank" rel="external">https://github.com/googlecast/</a></p>
-<p>###receiver<br>由於2048遊戲部分不太需要去寫邏輯部分，故主要只要處理訊息的接收與發出即可<br>初始化部分:<br>在 application.js 中 window.requestAnimationFrame中加入<br><script src="//gist.github.com/17a58ee1f2e1ba5ac479.js"></script><br>這裡我有一個部分是用偷懶的做法<br><code>window.senderId=event.senderId;</code> 這裡將senderId放在window底下以便之後要回傳訊息使用<br>但個人覺得不是好的做法 但這是測試用的程式就先略過</p>
-<p>鍵盤事件接收部分  在 keyboard_input_manager.js 中的KeyboardInputManager.prototype.listen方法中加入<br><script src="//gist.github.com/f7b4ba0b553e94195617.js"></script><br>將sender傳送過來的訊息對應該做的行為</p>
-<p>當玩家無法再移動或者是已達到2048的時候都會有訊息出現，在這種狀況下可以回傳訊息給sender出現相對應的操作界面，為此修改html_actuator.js如下<br><script src="//gist.github.com/b232fa188603c7b928ac.js"></script></p>
-<p>###sender<br>這裡我做了兩個平台的sender程式，其實主要也是改google的範例程式<br>chrome版主要就是把keyboard event send給receiver<br>android也是差不多, 只是把swipe的方向改為對應的key code傳給receiver<br>另外接收遊戲結束的訊息跳出對應的AlertDialog</p>
-<p>或許下次可以試試看現有 html5遊戲引擎在chromecast上的效能</p>
-<hr>
-<p>以下為參考資料</p>
-<p>模擬器<br>模擬器感覺在自定receiver app的部分支援並不完整  實機測還是比較好<br>以下是目前有看到的模擬器</p>
-<p>CR Cast (chrome 擴展)<br><a href="https://chrome.google.com/webstore/detail/cr-cast/acmfmindblghbicdipoakcolegkcddbk" target="_blank" rel="external">https://chrome.google.com/webstore/detail/cr-cast/acmfmindblghbicdipoakcolegkcddbk</a><br>Leapcast (python, run on chrome)<br><a href="https://github.com/dz0ny/leapcast" target="_blank" rel="external">https://github.com/dz0ny/leapcast</a><br>android 模擬  cheapcast (跑不起來)<br><a href="https://github.com/mauimauer/cheapcast" target="_blank" rel="external">https://github.com/mauimauer/cheapcast</a><br>rPlay on iOS<br><a href="http://www.vmlite.com/index.php?option=com_kunena&amp;Itemid=158&amp;func=view&amp;catid=23&amp;id=12020" target="_blank" rel="external">http://www.vmlite.com/index.php?option=com_kunena&amp;Itemid=158&amp;func=view&amp;catid=23&amp;id=12020</a></p>
-<hr>
-<p>###Developer Console<br><a href="https://cast.google.com/publish/" target="_blank" rel="external">https://cast.google.com/publish/</a><br>由於要自行開發receiver app所以需要開通Developer Console<br>需要五元美金  如果只是要cast媒體就不需要</p>
-<p><img src="/2014/05/19/自製2048-for-Chromecast/chromecase_console.png" alt="console"><br>如圖，可以設置APP 與 測試用裝置<br>如果Application不是Published的話則要有輸入的裝置才能使用</p>
-<p>目前已有的遊戲應用<br>下面有兩個已在 Google Play上架的應用<br>GamingCast (for Chromecast)<br><a href="https://play.google.com/store/apps/details?id=co.essh.gamecast" target="_blank" rel="external">https://play.google.com/store/apps/details?id=co.essh.gamecast</a><br>2048 Chromecast<br><a href="https://play.google.com/store/apps/details?id=com.sunnydev.cast2048" target="_blank" rel="external">https://play.google.com/store/apps/details?id=com.sunnydev.cast2048</a></p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>近日在看Chromecast的相關文件，發現他可以自己做receiver app<br>receiver app是以HTML5來製作  但由於有一些效能限制 所以製作時需要注意<br>詳情可參考 <a href="https://developers.google.com/]]>
-    </summary>
-    
-      <category term="chromecast" scheme="http://hsienwei.github.io/tags/chromecast/"/>
     
   </entry>
   

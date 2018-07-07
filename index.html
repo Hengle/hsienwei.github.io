@@ -55,6 +55,8 @@ ga('send', 'pageview');
         
           <a class="main-nav-link" href="/atom.xml">Feed</a>
         
+          <a class="main-nav-link" href="https://github.com/hsienwei">Github</a>
+        
       </nav>
       <nav id="sub-nav">
         <div id="search-form-wrap">
@@ -65,6 +67,68 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-LineBotWithLambda" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/07/LineBotWithLambda/">AWS Lambda + LineBot</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/07/07/LineBotWithLambda/" class="article-date">
+  <time datetime="2018-07-07T07:00:18.000Z" itemprop="datePublished">2018-07-07</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/07/07/LineBotWithLambda/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>這篇主要紀錄一下之前寫的一個小玩具<br>主要是分為兩個部分</p>
+<ul>
+<li>使用Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</li>
+<li>使用LintBot api加上AWS lambda回應上一步存在DynamoDB中的資料</li>
+</ul>
+<hr>
+<p>第一部分是Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</p>
+<p>這裡主要是改以前寫的一個爬蟲程式, 以前寫的時候那時用的是python2.7版本並使用Mechanize 與 BeautifulSoup, 最近把它改成python3以及selenium<a href="https://github.com/hsienwei/ptt_data_parse" target="_blank" rel="external">連結</a>, 目前還會有一些舊的程式碼在裡面。</p>
+<p>程式可以指定要對哪個版來爬資料, 並可以指定要幾小時內的資料, 目前針對推文數高於一定程度以上的文章，另外使用<a href="https://developers.facebook.com/docs/graph-api/reference/v2.11/url" target="_blank" rel="external">FB API</a>去取該連結的互動狀況, 用該資料簡單去算一個分數(可以在下面的測試結果畫面看到)用來作為熱門文章的排序, 這個數字的好處是可以看到實際在FB的熱門狀況, 因為有時候PTT推文數高的文章不一定是值得分享的文章, 也有可能是閒聊文。</p>
+<p>另一part是將得到的資料寫進 AWS 的DynamoDB當中, <a href="https://github.com/hsienwei/ptt_data_parse/blob/master/dynamodb_conn.py" target="_blank" rel="external">程式碼在這</a>，會使用DynamoDB的原因主要是因為我的AWS 免費已經過期了, 所以我選擇使用目前還是有免費方案的DynamoDB。</p>
+<p>主要使用了兩張表, 一張是索引, 主要紀錄各個板對應到另一張表的資料ID，另一張表就是爬下來的資料，以版名以及爬資料的時間當作ID來儲存。</p>
+<hr>
+<p>第二部分是使用LintBot api加上AWS lambda回應上一步存在DynamoDB中的資料</p>
+<p>會使用lambda其實是一個湊巧, 一開始本來是要開一個EC2加上Nodejs或Python+flask來回應linebot webhook, 但是想一想我已經沒有免費Tier了, 作為一個小玩具成本有點高, 後來在查資料的時候看到<a href="https://blog.5000164.jp/2017/8/14/line-bot/" target="_blank" rel="external">這篇文章</a>, 覺得這樣server less的架構成本低, 又不需要一直開著, 也可以使用API Gateway來開一個https的api當作webhook。</p>
+<p>這裡當初在做的時候本來要讓linebot在資料有更新時自動使用push來通知使用者, 但是由於push功能需要付費, 所以就作罷了。</p>
+<hr>
+<p>下面就是成果<br><img src="https://qr-official.line.me/M/OkcTs6-FJF.png" alt="LineBot QRCode"><br>可以加入這個LineBot來測試</p>
+<p>以下是測試結果畫面<br>第一張圖, 隨便打幾個字可以得到目前有資料的版名<br><img src="https://i.imgur.com/I5ZyIf1.jpg?2" alt="Imgur"></p>
+<p>第二張圖, 輸入一個有資料的版名後, 可以得到爬蟲爬到的資料, 標題後是其分數<br><img src="https://i.imgur.com/6z3z8QK.jpg?2" alt="Imgur"></p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AWS/">AWS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LineBot/">LineBot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-python-selenium使用" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -278,58 +342,6 @@ LeanGesture.GetScreenDelta
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeanTouch/">LeanTouch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-UnityEngineAnalyzerTest" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/12/UnityEngineAnalyzerTest/">UnityEngineAnalyzer測試記錄</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2017/07/12/UnityEngineAnalyzerTest/" class="article-date">
-  <time datetime="2017-07-12T02:16:55.000Z" itemprop="datePublished">2017-07-12</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2017/07/12/UnityEngineAnalyzerTest/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今年不同場合的Unity研討會好像都有提到Unity腳本靜態分析的分享，所以心血來潮測試一下Unity Engine Analyzer。  </p>
-<ol>
-<li><p>官方說安裝可以透過NnGet Package Manager搜索來找到，但是就我的狀況直接找是找不到的。<br>因為我的vs2015內建的是<a href="https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/" target="_blank" rel="external">https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/</a> 這個source<br>需要的話連到<a href="https://www.nuget.org/" target="_blank" rel="external">NuGet首頁</a>可以看到下面有寫新的URL <a href="https://api.nuget.org/v3/index.json" target="_blank" rel="external">https://api.nuget.org/v3/index.json</a><br>改用這個就可以找的到了。  </p>
-</li>
-<li><p>unity專案裡面一般會有三個: 一般, Editor, plugins，然而測試的時候安裝好像不會全部都幫你加上analyzer, 只會在其中的一個加上（我找不到他的邏輯）。<br>要在其他專案中加入的話, 只需要自行增加analyzer, 選擇ProjectPath\packages\UnityEngineAnalyzer.1.0.0.0\analyzers\dotnet\cs\UnityEngineAnalyzer.dll 就會加入了。</p>
-</li>
-<li><p>目前提供9種檢查, 主要是不要使用一些耗效能的方法, 刪除空的方法, 避免使用coroutines這類的檢查, 有需要可以自己擴充。</p>
-</li>
-</ol>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/">Unity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UnityEngineAnalyzer/">UnityEngineAnalyzer</a></li></ul>
 
     </footer>
   
