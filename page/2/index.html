@@ -67,6 +67,77 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-LeanTouch" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/24/LeanTouch/">LeanTouch 方便的手勢控制plugin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/01/24/LeanTouch/" class="article-date">
+  <time datetime="2018-01-24T05:51:10.000Z" itemprop="datePublished">2018-01-24</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/01/24/LeanTouch/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://www.assetstore.unity3d.com/#!/content/30111" target="_blank" rel="external">Asset Store Link</a>  </p>
+<p>一開始專案在處理手勢的部份大多是自行處理, 以Unity的狀況來說如果是單指點擊來說寫起來沒有什麼大問題, 但後來專案中有需要處理Pinch與Twist兩種手勢, 一旦進入需要兩隻手指以上的手勢就開始麻煩了, 主要還是因為PC開發環境在多指的行為上需要自行模擬, 以及可能需要用執行環境來判斷來做不同的處理.</p>
+<pre><code><span class="preprocessor">#<span class="keyword">if</span> UNITY_EDITOR</span>
+    <span class="keyword">if</span> (Input.GetAxis(<span class="string">"Mouse ScrollWheel"</span>) != <span class="number">0</span>)
+    {
+        ...
+    }
+<span class="preprocessor">#<span class="keyword">elif</span> UNITY_ANDROID || UNITY_IOS</span>
+    <span class="keyword">if</span> (Input.touchCount == <span class="number">2</span>)
+    {
+        ...
+    }
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+</code></pre><p>一開始的作法是用替代的方式來取代, 比方說PC端用滑鼠滾輪來取代Twist, 但是用久了感覺不是很直覺, 而且維護起來確實比較麻煩, 要抓真實的感覺需要編譯apk至手機上測試, 於是之後就改用這個套件。</p>
+<p>這個套件對我的好處主要在於可以省略多平台的一些實作細節, 而且在PC端就可以模擬Pinch與Twist手勢（可選擇組合鍵）, 測試起來比較方便。<br><img src="/2018/01/24/LeanTouch/1.png" alt="[組件設置]" title="[組件設置]"></p>
+<p>事件提供了以下幾種</p>
+<pre><code>LeanTouch<span class="class">.OnFingerDown</span>  
+LeanTouch<span class="class">.OnFingerSet</span>   
+LeanTouch<span class="class">.OnFingerUp</span>    
+LeanTouch<span class="class">.OnFingerTap</span>   
+LeanTouch<span class="class">.OnFingerSwipe</span> 
+LeanTouch<span class="class">.OnGesture</span>     
+</code></pre><p>除了前幾個基本的事件以外, 也可以用LeanTouch.OnGesture來處理複雜的手勢,另外也提供了相關的取值方法：</p>
+<pre><code>LeanGesture<span class="class">.GetTwistDegrees</span>
+LeanGesture<span class="class">.GetPinchScale</span>
+LeanGesture.GetScreenDelta
+</code></pre><p>不用再去計算一些細節比方說pinch兩指間移動的量之類的。</p>
+<p>看一些文章有提到該套件有一些組件可以提供一些預設行為可供套用, 雖然沒有用到但感覺也是挺方便的。</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeanTouch/">LeanTouch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-UnityEngineAnalyzerTest" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -377,53 +448,6 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
 
 
     
-      <article id="post-shader-calculate-help" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/24/shader-calculate-help/">一些shader相關網站</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2016/01/24/shader-calculate-help/" class="article-date">
-  <time datetime="2016-01-24T02:52:25.000Z" itemprop="datePublished">2016-01-24</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2016/01/24/shader-calculate-help/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Formulas for Photoshop blending modes<br>講解一些Blend mode的公式<br><a href="http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html" target="_blank" rel="external">http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html</a></p>
-<p>Photoshop Blendmodi in GLSL<br>同上, 但是主要針對GLSL<br><a href="http://renderingpipeline.com/2012/06/photoshop-blendmodi-glsl/" target="_blank" rel="external">http://renderingpipeline.com/2012/06/photoshop-blendmodi-glsl/</a></p>
-<p>ANDROID LESSON FIVE: AN INTRODUCTION TO BLENDING<br>講解OpenGL中的BlendFunc的計算公式<br><a href="http://www.learnopengles.com/tag/additive-blending/" target="_blank" rel="external">http://www.learnopengles.com/tag/additive-blending/</a></p>
-<p>GLSL : common mistakes<br>常見的GLSL錯誤<br><a href="https://www.opengl.org/wiki/GLSL_:_common_mistakes" target="_blank" rel="external">https://www.opengl.org/wiki/GLSL_:_common_mistakes</a></p>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/link/">link</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shader/">shader</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
       </nav>
@@ -432,7 +456,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2018 Hsien-Wei Hsiang&nbsp;
+      &copy; 2019 Hsien-Wei Hsiang&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/ppoffice">PPOffice</a>
     </div>
   </div>

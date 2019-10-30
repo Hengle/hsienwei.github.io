@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://hsienwei.github.io/"/>
-  <updated>2018-07-07T16:27:33.655Z</updated>
+  <updated>2019-10-30T03:44:04.688Z</updated>
   <id>http://hsienwei.github.io/</id>
   
   <author>
@@ -13,6 +13,55 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[使用 BitBucket PullRequest API]]></title>
+    <link href="http://hsienwei.github.io/2019/10/30/%E4%BD%BF%E7%94%A8-BitBucket-PullRequest-API/"/>
+    <id>http://hsienwei.github.io/2019/10/30/使用-BitBucket-PullRequest-API/</id>
+    <published>2019-10-30T03:35:15.000Z</published>
+    <updated>2019-10-30T03:44:04.688Z</updated>
+    <content type="html"><![CDATA[<h1 id="前言">前言</h1><p>由於目前公司專案數量大約有幾十個<br>有一些共同的修正因為設計關係需要對所有專案都進行類似的修改<br>這類作業舉例來說會是一些換圖或者是一些檔案調整<br>目前大多是自己寫腳本來處理<br>流程一開始如下<br>開branch-&gt;修改-&gt;commit-&gt;push-&gt;提PR<br>由於一開始提PR這個流程沒有自動化<br>所以還是需要一些人工去處理</p>
+<p>後來將流程改成<br>主branch修改-&gt;commit-&gt;push<br>這樣的風險在於腳本萬一處理有問題的話沒有檢查處理結果的機會<br>後來覺得應該還是要走PR的流程<br>所以需要將PR自動化</p>
+<h1 id="App_password">App password</h1><p>這是一個需要預先準備的東西<br>在bitbucket settings中可以找到這個選項<br>因為有的api需要你輸入使用username以及password<br>(官方給的curl範例是-u選項<br>postman中會是在Authorization分頁中使用Basic Auth)<br>此處的password是指App password<br>可以針對不同的權限需求使用不同的密碼</p>
+<p>使用PR API需要的權限<br>Team membership     R<br>Pull requests     R/W</p>
+<h1 id="curl_轉_python">curl 轉 python</h1><p>由於官方給的範例主要是curl<br>我自己用的是python<br>可以用以下網頁轉換<br><a href="https://curl.trillworks.com/" target="_blank" rel="external">https://curl.trillworks.com/</a></p>
+<p>如果用postman也會有提供轉換功能</p>
+<h1 id="API">API</h1><h2 id="前置作業:_取得使用者資訊(uuid)">前置作業: 取得使用者資訊(uuid)</h2><p>主要用於設定reviewer<br>在使用PR API時會需要對方的uuid</p>
+<p>api page:<br><a href="https://developer.atlassian.com/bitbucket/api/2/reference/resource/users/%7Busername%7D" target="_blank" rel="external">https://developer.atlassian.com/bitbucket/api/2/reference/resource/users/%7Busername%7D</a></p>
+<p>使用範例:<br><a href="https://api.bitbucket.org/2.0/users/hsienwei" target="_blank" rel="external">https://api.bitbucket.org/2.0/users/hsienwei</a></p>
+<p>response 範例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#34;display_name&#34;: &#34;hsienwei hsiang&#34;, &#34;uuid&#34;: &#34;&#123;c56de9fd-b17b-4fd0-9d42-89a114ba839c&#125;&#34;, &#34;links&#34;: &#123;&#34;hooks&#34;: &#123;&#34;href&#34;: &#34;https://api.bitbucket.org/2.0/users/%7Bc56de9fd-b17b-4fd0-9d42-89a114ba839c%7D/hooks&#34;&#125;, &#34;self&#34;: &#123;&#34;href&#34;: &#34;https://api.bitbucket.org/2.0/users/%7Bc56de9fd-b17b-4fd0-9d42-89a114ba839c%7D&#34;&#125;, &#34;repositories&#34;: &#123;&#34;href&#34;: &#34;https://api.bitbucket.org/2.0/repositories/%7Bc56de9fd-b17b-4fd0-9d42-89a114ba839c%7D&#34;&#125;, &#34;html&#34;: &#123;&#34;href&#34;: &#34;https://bitbucket.org/%7Bc56de9fd-b17b-4fd0-9d42-89a114ba839c%7D/&#34;&#125;, &#34;avatar&#34;: &#123;&#34;href&#34;: &#34;https://secure.gravatar.com/avatar/e75de8273492ae27638a55f7effc2f37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FHH-6.png&#34;&#125;, &#34;snippets&#34;: &#123;&#34;href&#34;: &#34;https://api.bitbucket.org/2.0/snippets/%7Bc56de9fd-b17b-4fd0-9d42-89a114ba839c%7D&#34;&#125;&#125;, &#34;nickname&#34;: &#34;hsienwei&#34;, &#34;created_on&#34;: &#34;2013-12-19T07:57:15.653135+00:00&#34;, &#34;is_staff&#34;: false, &#34;account_status&#34;: &#34;active&#34;, &#34;type&#34;: &#34;user&#34;, &#34;account_id&#34;: &#34;557058:43f113de-285b-40cd-8271-e4a9e28f7331&#34;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>這裡有一點需要注意，如果要使用uuid需要連左右大括弧一起使用，如上面範例的<code>{c56de9fd-b17b-4fd0-9d42-89a114ba839c}</code></p>
+<h2 id="前置作業:_取得repo_slug">前置作業: 取得repo slug</h2><p>一般來講repo slug就觀察來說應該就是你在網頁上看到的名稱，所以不太需要用API來看，但這裡有一個方法可以讓你看到指定team/user的所有repo資訊<br>api page:<br><a href="https://developer.atlassian.com/bitbucket/api/2/reference/resource/teams/%7Busername%7D/repositories" target="_blank" rel="external">https://developer.atlassian.com/bitbucket/api/2/reference/resource/teams/%7Busername%7D/repositories</a><br>使用範例:<br><a href="https://api.bitbucket.org/2.0/repositories/hsienwei" target="_blank" rel="external">https://api.bitbucket.org/2.0/repositories/hsienwei</a></p>
+<p>需要使用username跟password才能取到private的資訊</p>
+<p>如數量較多會分多頁顯示<br>會有幾個欄位提供如</p>
+<ul>
+<li>pagelen 有幾頁</li>
+<li>page 第幾頁</li>
+<li>next 下一頁網址<br><a href="https://api.bitbucket.org/2.0/repositories/hsienwei?page=2" target="_blank" rel="external">https://api.bitbucket.org/2.0/repositories/hsienwei?page=2</a></li>
+</ul>
+<h2 id="Pull_Request_API">Pull Request API</h2><p>api page:<br><a href="https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/pullrequests#post" target="_blank" rel="external">https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/pullrequests#post</a></p>
+<h1 id="簡易python範例">簡易python範例</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import requests&#10;import json&#10;&#10;headers = &#123;&#10;    &#39;Content-Type&#39;: &#39;application/json&#39;,&#10;&#125;&#10;&#10;data =  &#123;&#10;            &#39;title&#39;: &#39;Just test&#39;,&#10;            &#39;source&#39;:&#10;            &#123;&#10;                &#39;branch&#39;:&#10;                &#123;&#10;                    &#39;name&#39;: &#39;source-branch-name&#39;&#10;                &#125;&#10;            &#125;,&#10;            &#39;destination&#39;:&#10;            &#123;&#10;                &#39;branch&#39;:&#10;                &#123;&#10;                    &#39;name&#39;: &#39;destination-branch-name&#39;&#10;                &#125;&#10;            &#125;,&#10;            &#39;reviewers&#39;: [&#10;                &#123;&#10;                    &#39;uuid&#39;: &#39;&#123;c56de9fd-b17b-4fd0-9d42-89a114ba839c&#125;&#39;&#10;                &#125;&#10;            ],&#10;            &#39;description&#39;: &#39;aaa&#39;,&#10;            &#39;close_source_branch&#39;: True&#10;        &#125;&#10;&#10;&#10;data_str = json.dumps(data)&#10;&#10;response = requests.request(&#34;POST&#34;, &#39;https://api.bitbucket.org/2.0/repositories/username/reposlug/pullrequests&#39;&#10;    , headers=headers, data=data_str, auth=(&#39;username&#39;, &#39;password&#39;))&#10;&#10;print(response.text)</span><br></pre></td></tr></table></figure>
+<p>這裡需要給的資料大概就幾個</p>
+<ul>
+<li>title : PR的標題</li>
+<li>source &gt; branch : 來源分支</li>
+<li>destination &gt; branch : 目標分支</li>
+<li>reviewers : 這裡填的是reviewer的uuid</li>
+<li>description : 該PR的說明內容</li>
+<li>close_source_branch : 合併後是否關閉該分支</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="前言">前言</h1><p>由於目前公司專案數量大約有幾十個<br>有一些共同的修正因為設計關係需要對所有專案都進行類似的修改<br>這類作業舉例來說會是一些換圖或者是一些檔案調整<br>目前大多是自己寫腳本來處理<br>流程一開始如下<br>開branch-&g]]>
+    </summary>
+    
+      <category term="bitbucket" scheme="http://hsienwei.github.io/tags/bitbucket/"/>
+    
+      <category term="git" scheme="http://hsienwei.github.io/tags/git/"/>
+    
+      <category term="python" scheme="http://hsienwei.github.io/tags/python/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[AWS Lambda + LineBot]]></title>
@@ -760,32 +809,6 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
       <category term="sublime" scheme="http://hsienwei.github.io/tags/sublime/"/>
     
       <category term="unity" scheme="http://hsienwei.github.io/tags/unity/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[Crashlytics 申請使用記錄]]></title>
-    <link href="http://hsienwei.github.io/2014/06/06/Crashlytics-%E7%94%B3%E8%AB%8B%E4%BD%BF%E7%94%A8%E8%A8%98%E9%8C%84/"/>
-    <id>http://hsienwei.github.io/2014/06/06/Crashlytics-申請使用記錄/</id>
-    <published>2014-06-05T16:46:07.000Z</published>
-    <updated>2017-05-25T15:33:26.391Z</updated>
-    <content type="html"><![CDATA[<p>相較於Crittercism<br>Crashlytics專注於crash的記錄與統計<br>且目前為免費使用（2014/6/6）  </p>
-<p>要申請Crashlytics帳號必須先在<a href="http://try.crashlytics.com/留下你的資料" target="_blank" rel="external">http://try.crashlytics.com/留下你的資料</a><br>個人經驗是下午三點申請大概晚上9點就回覆你了<br>會收到兩封信<br>一封是Invitation<br>另一封是確認你有沒有收到Invitation的信件會要求你回覆（我有回覆，但感覺只是CRM的信件）  </p>
-<p>從Invitation裡的按鈕進入並依他的步驟一直往下走會進到下載plugin的頁面<br><img src="/2014/06/06/Crashlytics-申請使用記錄/20c872b148c50cde0b59847b9ad8a47e-767323.png" alt="20c872b148c50cde0b59847b9ad8a47e-767323.png" title=""></p>
-<p>個人覺得這是Crashlytics的特色<br>透過一套plugin讓使用者在設定過程中得到幫助與需要的說明<br>並在有crash時提供一個清單讓你觀看<br>這裡我試裝了XCODE與Eclipse兩個plugin<br>XCODE會出現在右上角系統bar中<br><img src="/2014/06/06/Crashlytics-申請使用記錄/940352bececc230f3db3bbc654ba1292-770386.png" alt="940352bececc230f3db3bbc654ba1292-770386.png" title=""></p>
-<p>而Eclipse會出現在Eclipse Toolbar當中<br><img src="/2014/06/06/Crashlytics-申請使用記錄/55a952c8a6ee86818406f81d13070956-771720.png" alt="55a952c8a6ee86818406f81d13070956-771720.png" title=""></p>
-<p>以XCODE版為例<br>一開始按下ICON後會出現以下畫面<br><img src="/2014/06/06/Crashlytics-申請使用記錄/797ee9ab8961ab14fac9c7e27d20dee9-777744.png" alt="797ee9ab8961ab14fac9c7e27d20dee9-777744.png" title=""></p>
-<p>基本上就是將我的XCODE專案都列出來方便我選擇要使用Crashlytics的專案<br>在這裡選擇專案以後會出現設定的說明如下<br><img src="/2014/06/06/Crashlytics-申請使用記錄/63978861f8946d0823a5c0d2ffaa4727-779625.png" alt="63978861f8946d0823a5c0d2ffaa4727-779625.png" title=""></p>
-<p>這裡說明了要你在target中加一個Run Script並將設定內容列出來<br>要注意的是這裡已經幫你在該專案中加了Crashlytics.framework<br>當你完成設定並build之後他就會進到接下來的步驟像是framework設置以及程式碼的增加<br>我覺得這個教學的步驟對新手而言可以保證他設定完成<br>但對有經驗的人可能有點多餘<br>另外提一下，Eclipse版在選完專案後甚至幫你把Androidmanifest.xml設定與程式碼加進去  </p>
-<p>設定完成後就可以開始故意讓程式crash來測試<br>此時crash就會出現在清單中了<br><img src="/2014/06/06/Crashlytics-申請使用記錄/3986cc0128d372e0c7b7f942da8bf0bc-781673.png" alt="3986cc0128d372e0c7b7f942da8bf0bc-781673.png" title=""></p>
-<p>根據個人測試，plugin上的crash清單反應似乎沒有web快，需要多等幾分鐘才會出現  </p>
-<p>點擊清單上的crash項目後會在瀏覽器上開啟該crash的詳細訊息<br><img src="/2014/06/06/Crashlytics-申請使用記錄/01e1ac2287bfd18fb2bc04042b70d818-783958.png" alt="01e1ac2287bfd18fb2bc04042b70d818-783958.png" title=""><br><img src="/2014/06/06/Crashlytics-申請使用記錄/1d56c7548fab83063804a0e779b93f9d-786311.png" alt="1d56c7548fab83063804a0e779b93f9d-786311.png" title=""><br>此時就可以依照錯誤訊息除錯囉  </p>
-<p>P.s. 尚未測試過，不確定NDK crash狀況是否可以正確呈現 </p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>相較於Crittercism<br>Crashlytics專注於crash的記錄與統計<br>且目前為免費使用（2014/6/6）  </p>
-<p>要申請Crashlytics帳號必須先在<a href="http://try.crashlytics.com/留下你的資料]]>
-    </summary>
     
   </entry>
   
