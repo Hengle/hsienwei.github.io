@@ -67,6 +67,54 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-struct-between-native-c" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/07/struct-between-native-c/">c++與c＃間的溝通與資料傳遞</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2018/02/07/struct-between-native-c/" class="article-date">
+  <time datetime="2018-02-07T02:55:29.000Z" itemprop="datePublished">2018-02-07</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2018/02/07/struct-between-native-c/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>目前的專案server端與client端間的共用邏輯是用C++寫的, 而Unity的主要使用程式碼又是c#, 所以有需要從c#呼叫c++端的方法, 以及從c++取資料, 這裡主要整理一下專案用的方法以及遇到的一些問題。<br>
+        
+          <p class="article-more-link">
+            <a href="/2018/02/07/struct-between-native-c/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mono/">mono</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-LeanTouch" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -310,135 +358,6 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Culling-Group/">Culling Group</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-DOTweenInUnity" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/25/DOTweenInUnity/">DOTween：一個好用的Unity Tween System plugin</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2017/05/25/DOTweenInUnity/" class="article-date">
-  <time datetime="2017-05-25T09:57:33.000Z" itemprop="datePublished">2017-05-25</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2017/05/25/DOTweenInUnity/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>以下內容為之前在公司分享的東西</p>
-<ul>
-<li><p>目前專案使用的Tween System   </p>
-<ul>
-<li>美術:UITweener(來自NGUI)</li>
-<li>程式:視狀況使用DOTween或UITweener</li>
-</ul>
-</li>
-<li><p>為何要使用DOTween</p>
-<ul>
-<li>從Cocos2d-X轉到Unity, 突然少了Action很不方便</li>
-<li>我個人來看UITweener不太夠用</li>
-</ul>
-</li>
-</ul>
-<h2 id="DOTween">DOTween</h2><p><a href="http://dotween.demigiant.com/index.php" target="_blank" rel="external">http://dotween.demigiant.com/index.php</a><br>2016年10月左右開始使用  </p>
-<p>優點：  </p>
-<ul>
-<li>Open Source</li>
-<li>文件完整</li>
-</ul>
-<p>缺點：  </p>
-<ul>
-<li>功能限制(Pro版)</li>
-<li>沒有Component</li>
-</ul>
-<h2 id="Features">Features</h2><p>個人比較在乎的  </p>
-<ul>
-<li>Speed and efficiency<br>Not only very fast, but also very efficient: everything is cached and reused to avoid useless GC allocations.</li>
-<li>Shortcuts<br>Shortcut extensions that directly extend common objects like this:<br>// Move a transform to position 1,2,3 in 1 second<br>transform.DOMove(new Vector3(1,2,3), 1);</li>
-<li>Full control<br>Play, Pause, Rewind, Restart, Complete, Goto and tons of other useful methods to control your tweens.</li>
-</ul>
-<p>其他見 <a href="http://dotween.demigiant.com/index.php#features" target="_blank" rel="external">http://dotween.demigiant.com/index.php#features</a></p>
-<h3 id="基本功能">基本功能</h3><p>Transform  </p>
-<ul>
-<li>DOMove</li>
-<li>DOMoveX/DOMoveY/DOMoveZ</li>
-<li>DORotate</li>
-<li>DORotateQuaternion</li>
-<li>DOLookAt</li>
-<li>DOScale</li>
-<li>DOScaleX/DOScaleY/DOScaleZ</li>
-<li>DOShakePosition</li>
-<li>DOShakeRotation</li>
-<li>DOShakeScale</li>
-<li>DOPath</li>
-</ul>
-<p>Material  </p>
-<ul>
-<li>DOColor</li>
-<li>DOFade</li>
-<li>DOFloat</li>
-<li>DOOffset</li>
-<li>DOTiling</li>
-</ul>
-<p>Camera  </p>
-<ul>
-<li>DOAspect</li>
-<li>DOColor</li>
-<li>DOFieldOfView</li>
-<li>DONearClipPlane</li>
-<li>DOOrthoSize</li>
-</ul>
-<p>通用方法<br>// Tween a Vector3 called myVector to 3,4,8 in 1 second<br>DOTween.To(()=&gt; myVector, x=&gt; myVector = x, new Vector3(3,4,8), 1);<br><img src="http://dotween.demigiant.com/_imgs/splash_lambda.png" alt=""></p>
-<h3 id="callbacks">callbacks</h3><p>幾乎可以應付所有狀況的callback可以使用  </p>
-<ul>
-<li>OnComplete</li>
-<li>OnUpdate</li>
-<li>OnKill</li>
-<li>OnPlay</li>
-<li>OnPause</li>
-<li>OnRewind</li>
-<li>OnStart</li>
-<li>OnStepComplete: 這個比較特別, 如果有repeat的話每一次都會呼叫</li>
-</ul>
-<h3 id="options">options</h3><p>這裡列出幾個比較常用的選項  </p>
-<ul>
-<li>SetEase(Ease easeType \ AnimationCurve animCurve \ EaseFunction customEase)<br>漸進的設置</li>
-<li>SetId(object id)<br>設置一個獨特的id, 以便以後取用</li>
-<li>SetLoops(int loops, LoopType loopType = LoopType.Restart)<br>播放次數</li>
-<li>SetUpdate(UpdateType updateType, bool isIndependentUpdate = false)<br>設置該tween要在Update, FixedUpdate, LateUpdate處理</li>
-<li>SetDelay(float delay)<br>延遲時間</li>
-<li>SetSpeedBased(bool isSpeedBased = true)<br>以單位時間為基準, 打開後設置的時間會變成每單位的時間。<br>比方說DOMove(4, 1)原本是一秒移動4單位，會變成一秒移動一單位, 移動4秒。</li>
-</ul>
-<h3 id="效能">效能</h3><p>官方測試<br><a href="http://dotween.demigiant.com/#enginesComparison" target="_blank" rel="external">http://dotween.demigiant.com/#enginesComparison</a></p>
-<h3 id="其他">其他</h3><p>個人喜歡他的DoPath會有預覽線條的功能。</p>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DOTween/">DOTween</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/">Unity</a></li></ul>
 
     </footer>
   

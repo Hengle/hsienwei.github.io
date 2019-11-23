@@ -67,6 +67,81 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-Android設定寄送夾帶附件的E-mail時附件無法使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/">Android設定寄送夾帶附件的E-mail時附件無法使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/" class="article-date">
+  <time datetime="2013-04-19T15:01:26.000Z" itemprop="datePublished">2013-04-19</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="問題起因">問題起因</h3><p>基本上使用常見的方法如下</p>
+<pre><code>Intent i = <span class="keyword">new</span> Intent(Intent.ACTION_SEND);
+i.setType(<span class="string">"image/jpeg"</span>);
+i.putExtra(Intent.EXTRA_EMAIL  , <span class="keyword">new</span> <span class="built_in">String</span>[]{sendTarget});
+i.putExtra(Intent.EXTRA_SUBJECT, sendSubject);
+i.putExtra(Intent.EXTRA_TEXT   , sendText);
+i.putExtra(Intent.EXTRA_STREAM, <span class="built_in">Uri</span>.parse(<span class="string">"file://"</span>+ filePath));
+<span class="keyword">try</span> {
+     curActivity.startActivity(Intent.createChooser(i, <span class="string">"Please select Email client"</span>));
+} <span class="keyword">catch</span> (android.content.ActivityNotFoundException ex) {
+    Toast.makeText(curActivity, <span class="string">"There are no email clients installed."</span>, Toast.LENGTH_SHORT).show();
+}
+</code></pre><p>問題出於我給的是Internal Storage的路徑，所以基本上當其它的應用程式要取用檔案時有有存取權限問題</p>
+<h3 id="解決方式">解決方式</h3><p>copy一份到External Storage再用copy檔的路徑即可</p>
+<pre><code>File externalPicPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+File dstFile = <span class="keyword">new</span> File(externalPicPath, <span class="string">"picture.png"</span>);
+<span class="keyword">try</span>{
+    FileInputStream <span class="keyword">in</span> = <span class="keyword">new</span> FileInputStream(filePath);
+    FileOutputStream <span class="keyword">out</span> = <span class="keyword">new</span> FileOutputStream(dstFile);
+    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];
+    <span class="keyword">int</span> len;
+    <span class="keyword">while</span> ((len = <span class="keyword">in</span>.read(buf)) &gt; <span class="number">0</span>) {
+        <span class="keyword">out</span>.write(buf, <span class="number">0</span>, len);
+    }
+    <span class="keyword">in</span>.close();
+    <span class="keyword">out</span>.close();
+}
+<span class="keyword">catch</span>(IOException e)
+{
+    Toast.makeText(curActivity, <span class="string">"I/O Error."</span>, Toast.LENGTH_SHORT).show();
+     <span class="keyword">return</span>;
+}
+</code></pre>
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-Unity練習：使用Texture-Packer自製簡易2D-Sprite物件" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -302,62 +377,6 @@ ga('send', 'pageview');
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-ios-app-crack-相關文章" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2012/06/11/ios-app-crack-相關文章/">ios app crack 相關文章</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2012/06/11/ios-app-crack-相關文章/" class="article-date">
-  <time datetime="2012-06-11T15:11:02.000Z" itemprop="datePublished">2012-06-11</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2012/06/11/ios-app-crack-相關文章/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>詳細教程<br>這兩篇主要教你使用GDB並使用修改組語方式改程式<br><a href="http://bbs.weiphone.com/read-htm-tid-672262.html" target="_blank" rel="external">http://bbs.weiphone.com/read-htm-tid-672262.html</a><br><a href="http://bbs.weiphone.com/read-htm-tid-1523875.html" target="_blank" rel="external">http://bbs.weiphone.com/read-htm-tid-1523875.html</a>  </p>
-<p>MAC APP的防堵方式  參考用<br>第一點基本上沒用  第二點弄發佈版的時候build不過  第三點還沒試<br><a href="http://www.seoxys.com/3-easy-tips-to-prevent-a-binary-crack/" target="_blank" rel="external">http://www.seoxys.com/3-easy-tips-to-prevent-a-binary-crack/</a>  </p>
-<p>最基本檢測方法<br><a href="http://stackoverflow.com/questions/1929166/how-to-programmatically-determine-if-drm-was-removed-from-iphone-application" target="_blank" rel="external">http://stackoverflow.com/questions/1929166/how-to-programmatically-determine-if-drm-was-removed-from-iphone-application</a><br>回應3 &gt;<br><a href="http://stackoverflow.com/questions/846309/reducing-piracy-of-iphone-applications" target="_blank" rel="external">http://stackoverflow.com/questions/846309/reducing-piracy-of-iphone-applications</a><br>最佳回答&gt;<br><a href="http://thwart-ipa-cracks.blogspot.com/2008/11/detection.html" target="_blank" rel="external">http://thwart-ipa-cracks.blogspot.com/2008/11/detection.html</a>  </p>
-<p>教學與效果<br><a href="http://www.youtube.com/watch?v=R0EIkCNyCiE" target="_blank" rel="external">http://www.youtube.com/watch?v=R0EIkCNyCiE</a>  </p>
-<p>關鍵文字<br>{SignerIdentity, Apple iPhone OS Application Signing}  </p>
-<p>關於那段文字似乎許多文章指出是在不用99鎂證書打包ipa時的步驟之一<br><a href="http://blog.csdn.net/yohunl/article/details/5971252" target="_blank" rel="external">http://blog.csdn.net/yohunl/article/details/5971252</a><br><a href="http://www.cocoachina.com/bbs/simple/?t7316.html" target="_blank" rel="external">http://www.cocoachina.com/bbs/simple/?t7316.html</a><br><a href="http://www.codeios.com/thread-1054-1-1.html" target="_blank" rel="external">http://www.codeios.com/thread-1054-1-1.html</a>  </p>
-<p>剛剛看過可以在改過的ipa檔中的*~.arm中找到Apple iPhone OS Application Signing<br>我自己打包的沒有  </p>
-<p>另外似乎還有其他防止方式<br>防止方式一覽<br><a href="http://lwbpeter.blog.163.com/blog/static/3850821120103180386372/" target="_blank" rel="external">http://lwbpeter.blog.163.com/blog/static/3850821120103180386372/</a>  </p>
-<p>改的方法, 那段文字的主要功用  還在尋找當中  </p>
-<p>一些相關資料<br><a href="http://lifehacker.com/5736101/how-to-crack-just-about-any-mac-app-and-how-to-prevent-it" target="_blank" rel="external">http://lifehacker.com/5736101/how-to-crack-just-about-any-mac-app-and-how-to-prevent-it</a><br><a href="http://hackulo.us/wiki/IOS_Cracking" target="_blank" rel="external">http://hackulo.us/wiki/IOS_Cracking</a><br><a href="http://www.mrspeaker.net/2011/01/06/mac-hacking/" target="_blank" rel="external">http://www.mrspeaker.net/2011/01/06/mac-hacking/</a>  </p>
-<p><a href="http://www.cocoanetics.com/anticrack/" target="_blank" rel="external">http://www.cocoanetics.com/anticrack/</a><br><a href="http://www.sensepost.com/blog/6254.html" target="_blank" rel="external">http://www.sensepost.com/blog/6254.html</a>  </p>
-<p><a href="http://38leinad.wordpress.com/2011/05/12/cracking-cocoa-apps-for-dummies/" target="_blank" rel="external">http://38leinad.wordpress.com/2011/05/12/cracking-cocoa-apps-for-dummies/</a>  </p>
-<p>使用CRACKULOUS破解App Store應用<br><a href="http://www.jindi.org/bbs/thread-183804-1-1.html" target="_blank" rel="external">http://www.jindi.org/bbs/thread-183804-1-1.html</a><br>揭秘破解软件的幕后，以及ARM那点事<br><a href="http://bbs.weiphone.com/read-htm-tid-1374779.html" target="_blank" rel="external">http://bbs.weiphone.com/read-htm-tid-1374779.html</a></p>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
 
     </footer>
   

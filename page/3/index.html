@@ -67,6 +67,135 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-DOTweenInUnity" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/25/DOTweenInUnity/">DOTween：一個好用的Unity Tween System plugin</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2017/05/25/DOTweenInUnity/" class="article-date">
+  <time datetime="2017-05-25T09:57:33.000Z" itemprop="datePublished">2017-05-25</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2017/05/25/DOTweenInUnity/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>以下內容為之前在公司分享的東西</p>
+<ul>
+<li><p>目前專案使用的Tween System   </p>
+<ul>
+<li>美術:UITweener(來自NGUI)</li>
+<li>程式:視狀況使用DOTween或UITweener</li>
+</ul>
+</li>
+<li><p>為何要使用DOTween</p>
+<ul>
+<li>從Cocos2d-X轉到Unity, 突然少了Action很不方便</li>
+<li>我個人來看UITweener不太夠用</li>
+</ul>
+</li>
+</ul>
+<h2 id="DOTween">DOTween</h2><p><a href="http://dotween.demigiant.com/index.php" target="_blank" rel="external">http://dotween.demigiant.com/index.php</a><br>2016年10月左右開始使用  </p>
+<p>優點：  </p>
+<ul>
+<li>Open Source</li>
+<li>文件完整</li>
+</ul>
+<p>缺點：  </p>
+<ul>
+<li>功能限制(Pro版)</li>
+<li>沒有Component</li>
+</ul>
+<h2 id="Features">Features</h2><p>個人比較在乎的  </p>
+<ul>
+<li>Speed and efficiency<br>Not only very fast, but also very efficient: everything is cached and reused to avoid useless GC allocations.</li>
+<li>Shortcuts<br>Shortcut extensions that directly extend common objects like this:<br>// Move a transform to position 1,2,3 in 1 second<br>transform.DOMove(new Vector3(1,2,3), 1);</li>
+<li>Full control<br>Play, Pause, Rewind, Restart, Complete, Goto and tons of other useful methods to control your tweens.</li>
+</ul>
+<p>其他見 <a href="http://dotween.demigiant.com/index.php#features" target="_blank" rel="external">http://dotween.demigiant.com/index.php#features</a></p>
+<h3 id="基本功能">基本功能</h3><p>Transform  </p>
+<ul>
+<li>DOMove</li>
+<li>DOMoveX/DOMoveY/DOMoveZ</li>
+<li>DORotate</li>
+<li>DORotateQuaternion</li>
+<li>DOLookAt</li>
+<li>DOScale</li>
+<li>DOScaleX/DOScaleY/DOScaleZ</li>
+<li>DOShakePosition</li>
+<li>DOShakeRotation</li>
+<li>DOShakeScale</li>
+<li>DOPath</li>
+</ul>
+<p>Material  </p>
+<ul>
+<li>DOColor</li>
+<li>DOFade</li>
+<li>DOFloat</li>
+<li>DOOffset</li>
+<li>DOTiling</li>
+</ul>
+<p>Camera  </p>
+<ul>
+<li>DOAspect</li>
+<li>DOColor</li>
+<li>DOFieldOfView</li>
+<li>DONearClipPlane</li>
+<li>DOOrthoSize</li>
+</ul>
+<p>通用方法<br>// Tween a Vector3 called myVector to 3,4,8 in 1 second<br>DOTween.To(()=&gt; myVector, x=&gt; myVector = x, new Vector3(3,4,8), 1);<br><img src="http://dotween.demigiant.com/_imgs/splash_lambda.png" alt=""></p>
+<h3 id="callbacks">callbacks</h3><p>幾乎可以應付所有狀況的callback可以使用  </p>
+<ul>
+<li>OnComplete</li>
+<li>OnUpdate</li>
+<li>OnKill</li>
+<li>OnPlay</li>
+<li>OnPause</li>
+<li>OnRewind</li>
+<li>OnStart</li>
+<li>OnStepComplete: 這個比較特別, 如果有repeat的話每一次都會呼叫</li>
+</ul>
+<h3 id="options">options</h3><p>這裡列出幾個比較常用的選項  </p>
+<ul>
+<li>SetEase(Ease easeType \ AnimationCurve animCurve \ EaseFunction customEase)<br>漸進的設置</li>
+<li>SetId(object id)<br>設置一個獨特的id, 以便以後取用</li>
+<li>SetLoops(int loops, LoopType loopType = LoopType.Restart)<br>播放次數</li>
+<li>SetUpdate(UpdateType updateType, bool isIndependentUpdate = false)<br>設置該tween要在Update, FixedUpdate, LateUpdate處理</li>
+<li>SetDelay(float delay)<br>延遲時間</li>
+<li>SetSpeedBased(bool isSpeedBased = true)<br>以單位時間為基準, 打開後設置的時間會變成每單位的時間。<br>比方說DOMove(4, 1)原本是一秒移動4單位，會變成一秒移動一單位, 移動4秒。</li>
+</ul>
+<h3 id="效能">效能</h3><p>官方測試<br><a href="http://dotween.demigiant.com/#enginesComparison" target="_blank" rel="external">http://dotween.demigiant.com/#enginesComparison</a></p>
+<h3 id="其他">其他</h3><p>個人喜歡他的DoPath會有預覽線條的功能。</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DOTween/">DOTween</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/">Unity</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-shader-calculate-help" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -279,68 +408,6 @@ ga('send', 'pageview');
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wxWidget/">wxWidget</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-spine-binary2json" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/02/21/spine-binary2json/">Spine二進制檔轉json檔測試</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2015/02/21/spine-binary2json/" class="article-date">
-  <time datetime="2015-02-20T16:31:40.000Z" itemprop="datePublished">2015-02-21</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2015/02/21/spine-binary2json/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>由於cocos2d-x目前版本(3.4)仍然不能讀取spine 2.0後推出的binary格式(.skel)<br>加上自己沒有購買spine所以不能將binary檔匯入後再輸出為json格式<br>所以嚐試自己弄一個轉換的小工具<br>雖然最後沒有使用<br>但還是記載一下過程</p>
-<hr>
-<p>由於spine官方目前有支援binary的runtime似乎只有libgdx<br>所以下面主要會以參考libgdx的方式來進行</p>
-<ol>
-<li><p>使用eclipse新建一個java application</p>
-</li>
-<li><p>下載spine libgdx程式庫，放在src下</p>
-</li>
-<li><p>下載libgdx release版本(本次測試使用1.5.3)<br>解開後將gdx.jar加入專案<br>由於由於裡面有使用到nativecode<br>打開gdx-natives.jar<br>將需要的library取出(這裡使用的是libbdx64.dll)<br>並在讀入該library</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">    System.loadLibrary(<span class="string">"gdx64"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>    
-<p>如果有找不到lib的狀況要記得在VM Arguments中加入下面內容<br><code>-Djava.library.path=D:\workspace_new\SpineBinary2Json\libs</code></p>
-</li>
-<li><p>新增libgdx的application並實作applicationListener<br>Application我是使用LwjglApplication，所以要將gdx-backend-lwjgl.jar與gdx-backend-lwjgl-natives.jar加入專案裡<br>之所以要這樣弄是因為我原本以為可以直接將TextureAtlas物件建立起來並生成SkeletonData<br>後來發現會出現錯誤如下</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread "main" java.lang.NullPointerException</span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.GLTexture.createGLHandle(GLTexture.java:197)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.Texture.&lt;init&gt;(Texture.java:123)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.Texture.&lt;init&gt;(Texture.java:103)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.load(TextureAtlas.java:244)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:236)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:231)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:226)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:216)</span></span><br><span class="line"><span class="code">	at Main.main(Main.java:76)</span></span><br></pre></td></tr></table></figure>    
-<p>發現應該是gl物件未產出<br>後來採最簡單的解法就是建立一個libgdx的application就會進行需要的初始化行為了</p>
-</li>
-<li><p>依照binary編寫json檔案<br>這裡可以參照下面兩個格式的讀取行為<br><a href="https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonJson.java" target="_blank" rel="external">https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonJson.java</a><br><a href="https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonBinary.java" target="_blank" rel="external">https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonBinary.java</a><br>一開始採取從SkeletonData逆推的方式，但最後失敗<br>卡在我無法從skin逆推attachment<br>後來只好改採在SkeletonBinary讀取檔案的過程中同時將json建立起來的方法(直接修改SkeletonBinary.java)<br>但由於這樣做可能會有版權的問題<br>故這裡並不提供程式碼<br>做起來應該是不難只是有點麻煩而已</p>
-</li>
-</ol>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spine/">spine</a></li></ul>
 
     </footer>
   

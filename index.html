@@ -67,6 +67,78 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-Jenkins使用筆記" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/11/24/Jenkins使用筆記/">Jenkins使用筆記(Windows版)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2019/11/24/Jenkins使用筆記/" class="article-date">
+  <time datetime="2019-11-23T17:08:09.000Z" itemprop="datePublished">2019-11-24</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2019/11/24/Jenkins使用筆記/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="安裝">安裝</h1><ol>
+<li><a href="https://jenkins.io/download/" target="_blank" rel="external">https://jenkins.io/download/</a> 下載windows Long-term Support version並安裝。</li>
+<li>安裝完後，瀏覽器會自動開啟 <a href="http://localhost:8080/" target="_blank" rel="external">http://localhost:8080/</a> ，此時可以看到Jenkins正在工作中。</li>
+<li>之後Jenkins會要求你輸入一個在指定路徑檔案的密碼，路徑大概像是<code>C:\Program Files (x86)\Jenkins\secrets\initialAdminPassword</code> 。</li>
+<li>密碼輸入後，Jenkins會要你安裝建議的plugin或者是選擇你自己需要的plugin，由於之後還可以再設定，所以可以先使用建議的就可以，之後的安裝會花幾分鐘的時間。</li>
+<li>安裝完後，Jenkins會要求你輸入第一個管理者的資料，稍後可以再加入其他管理者的資料。</li>
+<li>Jenkins會要求輸入使用的URL，可以使用預設設定，安裝程序結束後可以再設定。</li>
+<li>至此Jenkins已經設定完成，可以用左上角的 add job來增加建置job。</li>
+</ol>
+<h1 id="如何重啟或停止Jenkins服務">如何重啟或停止Jenkins服務</h1><ul>
+<li>透過 <a href="http://localhost:8080/restart" target="_blank" rel="external">http://localhost:8080/restart</a> 或 <a href="http://localhost:8080/safeRestart" target="_blank" rel="external">http://localhost:8080/safeRestart</a> 可以重啟jenkins服務。<br>(jenkins_url)/safeRestart - 允許所有正在進行的jobs完成，新的jobs會被保持在queue中等到重啟完成後再執行。<br>(jenkins_url)/restart - 強制重啟並不等待進行中的jobs完成。</li>
+<li>直接執行command, 加上參數如下<br>( jenkins_path)/jenkins.exe stop<blockquote>
+<p>‘install’ - install the service to Windows Service Controller<br>‘uninstall’ - uninstall the service<br>‘start’ - start the service (must be installed before)<br>‘stop’ - stop the service<br>‘restart’ - restart the service</p>
+</blockquote>
+</li>
+<li>如果需要重開的理由是PATH的修改變動，必須要使用jenkins.exe來restart。</li>
+</ul>
+<h1 id="How_to_add_SSH_key">How to add SSH key</h1><p>如果需要透過 ssh方式連接到git或者是建置過程需要使用到ssh，就需要先設定ssh key。</p>
+<p>按下 <code>Credentials</code>.<br><img src="https://i.imgur.com/fLlC09T.png" alt=""><br>按下 <code>System</code>.<br><img src="https://i.imgur.com/O4VYtj8.png" alt=""><br>按下 <code>Global credentials (unrestricted)</code>.<br><img src="https://i.imgur.com/q5CoExt.png" alt=""><br>按下 <code>Add Credentials</code> . 選擇 <code>SSH Username with private key</code>.<br>複製 SSH private key 的全部內容到 private key 欄位<br>(ssh private key 的預設路徑 : C:\Users\user_name\.ssh\id_rsa)<br>並輸入Username 與 passphrase (如果有的話).<br><img src="https://i.imgur.com/X8yzK0d.png" alt=""></p>
+<h1 id="Using_ssh-agent_in_build_process">Using ssh-agent in build process</h1><p><a href="https://plugins.jenkins.io/ssh-agent" target="_blank" rel="external">https://plugins.jenkins.io/ssh-agent</a><br>如果建置過程需要使用到ssh-agent，可以安裝這個plugin來使用<br>在安裝之後，在建置環境中可以看到<code>SSH agent</code>選項，選取以設定ssh key</p>
+<h1 id="Using_Slack_notification">Using Slack notification</h1><p><a href="https://plugins.jenkins.io/slack" target="_blank" rel="external">https://plugins.jenkins.io/slack</a><br>slack是一個企業用的通訊軟體，如果剛好公司使用了這個軟體而且需要通知建置結果，除了使用api方式來通知，也可以透過這個plugin來處理。</p>
+<h1 id="我覺得好用的plugin">我覺得好用的plugin</h1><ul>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/Extended+Choice+Parameter+plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Extended+Choice+Parameter+plugin</a><br>提供更多樣化的參數使用方式，像是選擇清單，讓參數輸入可以更方便</p>
+</li>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/Mask+Passwords+Plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Mask+Passwords+Plugin</a><br>可以將console log中的參數給隱藏起來的plugin，可以避免被看到輸入的密碼參數</p>
+</li>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/SCM+Sync+configuration+plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/SCM+Sync+configuration+plugin</a><br>提供使用版控系統來備份jenkins設定的功能</p>
+</li>
+</ul>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jenkins/">Jenkins</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-使用-BitBucket-PullRequest-API" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -296,54 +368,6 @@ ga('send', 'pageview');
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NGUI/">NGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UGUI/">UGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-struct-between-native-c" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/07/struct-between-native-c/">c++與c＃間的溝通與資料傳遞</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2018/02/07/struct-between-native-c/" class="article-date">
-  <time datetime="2018-02-07T02:55:29.000Z" itemprop="datePublished">2018-02-07</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2018/02/07/struct-between-native-c/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>目前的專案server端與client端間的共用邏輯是用C++寫的, 而Unity的主要使用程式碼又是c#, 所以有需要從c#呼叫c++端的方法, 以及從c++取資料, 這裡主要整理一下專案用的方法以及遇到的一些問題。<br>
-        
-          <p class="article-more-link">
-            <a href="/2018/02/07/struct-between-native-c/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mono/">mono</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
 
     </footer>
   

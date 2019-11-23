@@ -67,6 +67,68 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-spine-binary2json" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/02/21/spine-binary2json/">Spine二進制檔轉json檔測試</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2015/02/21/spine-binary2json/" class="article-date">
+  <time datetime="2015-02-20T16:31:40.000Z" itemprop="datePublished">2015-02-21</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2015/02/21/spine-binary2json/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由於cocos2d-x目前版本(3.4)仍然不能讀取spine 2.0後推出的binary格式(.skel)<br>加上自己沒有購買spine所以不能將binary檔匯入後再輸出為json格式<br>所以嚐試自己弄一個轉換的小工具<br>雖然最後沒有使用<br>但還是記載一下過程</p>
+<hr>
+<p>由於spine官方目前有支援binary的runtime似乎只有libgdx<br>所以下面主要會以參考libgdx的方式來進行</p>
+<ol>
+<li><p>使用eclipse新建一個java application</p>
+</li>
+<li><p>下載spine libgdx程式庫，放在src下</p>
+</li>
+<li><p>下載libgdx release版本(本次測試使用1.5.3)<br>解開後將gdx.jar加入專案<br>由於由於裡面有使用到nativecode<br>打開gdx-natives.jar<br>將需要的library取出(這裡使用的是libbdx64.dll)<br>並在讀入該library</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">    System.loadLibrary(<span class="string">"gdx64"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>    
+<p>如果有找不到lib的狀況要記得在VM Arguments中加入下面內容<br><code>-Djava.library.path=D:\workspace_new\SpineBinary2Json\libs</code></p>
+</li>
+<li><p>新增libgdx的application並實作applicationListener<br>Application我是使用LwjglApplication，所以要將gdx-backend-lwjgl.jar與gdx-backend-lwjgl-natives.jar加入專案裡<br>之所以要這樣弄是因為我原本以為可以直接將TextureAtlas物件建立起來並生成SkeletonData<br>後來發現會出現錯誤如下</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread "main" java.lang.NullPointerException</span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.GLTexture.createGLHandle(GLTexture.java:197)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.Texture.&lt;init&gt;(Texture.java:123)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.Texture.&lt;init&gt;(Texture.java:103)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.load(TextureAtlas.java:244)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:236)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:231)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:226)</span></span><br><span class="line"><span class="code">	at com.badlogic.gdx.graphics.g2d.TextureAtlas.&lt;init&gt;(TextureAtlas.java:216)</span></span><br><span class="line"><span class="code">	at Main.main(Main.java:76)</span></span><br></pre></td></tr></table></figure>    
+<p>發現應該是gl物件未產出<br>後來採最簡單的解法就是建立一個libgdx的application就會進行需要的初始化行為了</p>
+</li>
+<li><p>依照binary編寫json檔案<br>這裡可以參照下面兩個格式的讀取行為<br><a href="https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonJson.java" target="_blank" rel="external">https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonJson.java</a><br><a href="https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonBinary.java" target="_blank" rel="external">https://github.com/EsotericSoftware/spine-runtimes/blob/master/spine-libgdx/spine-libgdx/src/com/esotericsoftware/spine/SkeletonBinary.java</a><br>一開始採取從SkeletonData逆推的方式，但最後失敗<br>卡在我無法從skin逆推attachment<br>後來只好改採在SkeletonBinary讀取檔案的過程中同時將json建立起來的方法(直接修改SkeletonBinary.java)<br>但由於這樣做可能會有版權的問題<br>故這裡並不提供程式碼<br>做起來應該是不難只是有點麻煩而已</p>
+</li>
+</ol>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spine/">spine</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-file-encode-converter" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -286,56 +348,6 @@ ga('send', 'pageview');
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AppleTV/">AppleTV</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/youtube/">youtube</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-使用sublime為unity編輯器inmac之CompleteSharp設定障礙排除" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/06/27/使用sublime為unity編輯器inmac之CompleteSharp設定障礙排除/">使用sublime為unity編輯器 in mac之CompleteSharp設定障礙排除</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2014/06/27/使用sublime為unity編輯器inmac之CompleteSharp設定障礙排除/" class="article-date">
-  <time datetime="2014-06-26T18:51:40.000Z" itemprop="datePublished">2014-06-27</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2014/06/27/使用sublime為unity編輯器inmac之CompleteSharp設定障礙排除/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>標題下得很長<br>基本上是記載依照<a href="http://wiki.unity3d.com/index.php/Using_Sublime_Text_as_a_script_editor的步驟進行時" target="_blank" rel="external">http://wiki.unity3d.com/index.php/Using_Sublime_Text_as_a_script_editor的步驟進行時</a><br>CompleteSharp這個plugin在mac環境上遇到的一些問題</p>
-<ol>
-<li><p>CompleteSharp的安裝<br>個人測試在windows可以用package control直接安裝成功<br>而在mac下會出現Unable to download CompleteSharp的錯誤<br>這時候只能手動安裝<br>有兩種選擇<br>a) clone  <a href="https://github.com/ewilde/CompleteSharp" target="_blank" rel="external">https://github.com/ewilde/CompleteSharp</a> 到 Package資料夾<br>不需其他處理(建議)<br>b) 需事先安裝mono (下載<a href="http://www.go-mono.com/mono-downloads/download.html" target="_blank" rel="external">http://www.go-mono.com/mono-downloads/download.html</a>)<br>clone  <a href="https://github.com/quarnster/CompleteSharp" target="_blank" rel="external">https://github.com/quarnster/CompleteSharp</a> 到 Package資料夾<br>再執行CompleteSharp/build.py</p>
-</li>
-<li><p>CompleteSharp project setting<br>在mac環境中會用到completesharp_mono_path這個參數<br>wiki中寫的completesharp_mono_path是3.x 版時的路徑<br>4.x版可改為如下</p>
-<script src="//gist.github.com/ad4564e649a60996d9b0.js"></script></li>
-</ol>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sublime/">sublime</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
 
     </footer>
   

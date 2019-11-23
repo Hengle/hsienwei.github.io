@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://hsienwei.github.io/"/>
-  <updated>2019-10-30T03:44:04.688Z</updated>
+  <updated>2019-11-23T17:08:46.816Z</updated>
   <id>http://hsienwei.github.io/</id>
   
   <author>
@@ -13,6 +13,51 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Jenkins使用筆記(Windows版)]]></title>
+    <link href="http://hsienwei.github.io/2019/11/24/Jenkins%E4%BD%BF%E7%94%A8%E7%AD%86%E8%A8%98/"/>
+    <id>http://hsienwei.github.io/2019/11/24/Jenkins使用筆記/</id>
+    <published>2019-11-23T17:08:09.000Z</published>
+    <updated>2019-11-23T17:08:46.816Z</updated>
+    <content type="html"><![CDATA[<h1 id="安裝">安裝</h1><ol>
+<li><a href="https://jenkins.io/download/" target="_blank" rel="external">https://jenkins.io/download/</a> 下載windows Long-term Support version並安裝。</li>
+<li>安裝完後，瀏覽器會自動開啟 <a href="http://localhost:8080/" target="_blank" rel="external">http://localhost:8080/</a> ，此時可以看到Jenkins正在工作中。</li>
+<li>之後Jenkins會要求你輸入一個在指定路徑檔案的密碼，路徑大概像是<code>C:\Program Files (x86)\Jenkins\secrets\initialAdminPassword</code> 。</li>
+<li>密碼輸入後，Jenkins會要你安裝建議的plugin或者是選擇你自己需要的plugin，由於之後還可以再設定，所以可以先使用建議的就可以，之後的安裝會花幾分鐘的時間。</li>
+<li>安裝完後，Jenkins會要求你輸入第一個管理者的資料，稍後可以再加入其他管理者的資料。</li>
+<li>Jenkins會要求輸入使用的URL，可以使用預設設定，安裝程序結束後可以再設定。</li>
+<li>至此Jenkins已經設定完成，可以用左上角的 add job來增加建置job。</li>
+</ol>
+<h1 id="如何重啟或停止Jenkins服務">如何重啟或停止Jenkins服務</h1><ul>
+<li>透過 <a href="http://localhost:8080/restart" target="_blank" rel="external">http://localhost:8080/restart</a> 或 <a href="http://localhost:8080/safeRestart" target="_blank" rel="external">http://localhost:8080/safeRestart</a> 可以重啟jenkins服務。<br>(jenkins_url)/safeRestart - 允許所有正在進行的jobs完成，新的jobs會被保持在queue中等到重啟完成後再執行。<br>(jenkins_url)/restart - 強制重啟並不等待進行中的jobs完成。</li>
+<li>直接執行command, 加上參數如下<br>( jenkins_path)/jenkins.exe stop<blockquote>
+<p>‘install’ - install the service to Windows Service Controller<br>‘uninstall’ - uninstall the service<br>‘start’ - start the service (must be installed before)<br>‘stop’ - stop the service<br>‘restart’ - restart the service</p>
+</blockquote>
+</li>
+<li>如果需要重開的理由是PATH的修改變動，必須要使用jenkins.exe來restart。</li>
+</ul>
+<h1 id="How_to_add_SSH_key">How to add SSH key</h1><p>如果需要透過 ssh方式連接到git或者是建置過程需要使用到ssh，就需要先設定ssh key。</p>
+<p>按下 <code>Credentials</code>.<br><img src="https://i.imgur.com/fLlC09T.png" alt=""><br>按下 <code>System</code>.<br><img src="https://i.imgur.com/O4VYtj8.png" alt=""><br>按下 <code>Global credentials (unrestricted)</code>.<br><img src="https://i.imgur.com/q5CoExt.png" alt=""><br>按下 <code>Add Credentials</code> . 選擇 <code>SSH Username with private key</code>.<br>複製 SSH private key 的全部內容到 private key 欄位<br>(ssh private key 的預設路徑 : C:\Users\user_name\.ssh\id_rsa)<br>並輸入Username 與 passphrase (如果有的話).<br><img src="https://i.imgur.com/X8yzK0d.png" alt=""></p>
+<h1 id="Using_ssh-agent_in_build_process">Using ssh-agent in build process</h1><p><a href="https://plugins.jenkins.io/ssh-agent" target="_blank" rel="external">https://plugins.jenkins.io/ssh-agent</a><br>如果建置過程需要使用到ssh-agent，可以安裝這個plugin來使用<br>在安裝之後，在建置環境中可以看到<code>SSH agent</code>選項，選取以設定ssh key</p>
+<h1 id="Using_Slack_notification">Using Slack notification</h1><p><a href="https://plugins.jenkins.io/slack" target="_blank" rel="external">https://plugins.jenkins.io/slack</a><br>slack是一個企業用的通訊軟體，如果剛好公司使用了這個軟體而且需要通知建置結果，除了使用api方式來通知，也可以透過這個plugin來處理。</p>
+<h1 id="我覺得好用的plugin">我覺得好用的plugin</h1><ul>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/Extended+Choice+Parameter+plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Extended+Choice+Parameter+plugin</a><br>提供更多樣化的參數使用方式，像是選擇清單，讓參數輸入可以更方便</p>
+</li>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/Mask+Passwords+Plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Mask+Passwords+Plugin</a><br>可以將console log中的參數給隱藏起來的plugin，可以避免被看到輸入的密碼參數</p>
+</li>
+<li><p><a href="https://wiki.jenkins.io/display/JENKINS/SCM+Sync+configuration+plugin" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/SCM+Sync+configuration+plugin</a><br>提供使用版控系統來備份jenkins設定的功能</p>
+</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="安裝">安裝</h1><ol>
+<li><a href="https://jenkins.io/download/" target="_blank" rel="external">https://jenkins.io/download/</a> 下載windows]]>
+    </summary>
+    
+      <category term="Jenkins" scheme="http://hsienwei.github.io/tags/Jenkins/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[使用 BitBucket PullRequest API]]></title>
@@ -68,7 +113,7 @@
     <link href="http://hsienwei.github.io/2018/07/07/LineBotWithLambda/"/>
     <id>http://hsienwei.github.io/2018/07/07/LineBotWithLambda/</id>
     <published>2018-07-07T07:00:18.000Z</published>
-    <updated>2018-07-07T16:27:33.655Z</updated>
+    <updated>2018-07-07T16:27:33.656Z</updated>
     <content type="html"><![CDATA[<p>這篇主要紀錄一下之前寫的一個小玩具<br>主要是分為兩個部分</p>
 <ul>
 <li>使用Python + selenium 爬Ptt網頁版的資料並儲存在 AWS DynamoDB</li>
@@ -140,7 +185,7 @@
     <link href="http://hsienwei.github.io/2018/03/05/ngui-atlas-to-spritesheet/"/>
     <id>http://hsienwei.github.io/2018/03/05/ngui-atlas-to-spritesheet/</id>
     <published>2018-03-05T02:48:35.000Z</published>
-    <updated>2018-04-05T07:02:53.376Z</updated>
+    <updated>2018-04-05T07:02:53.377Z</updated>
     <content type="html"><![CDATA[<p>最近嘗試將一些效能消耗較大的NGUI UI轉換成UGUI測試, 不過目前暫時是自行測試, 所以在圖集部分暫時沿用以前的NGUI atlas來使用, 只是UGUI是不吃NGUI的atlas只吃sprite, 所以寫了一個工具來將NGUI的atlas資料寫到Texture的設定當中。</p>
 <p><a href="https://gist.github.com/hsienwei/1b76d6dfb43e281394e2cab07e331a7b" target="_blank" rel="external">連結在此</a>    </p>
 <p>最主要是要把讀取到SpriteData的y軸做額外的反轉處理.</p>
@@ -162,7 +207,7 @@
     <link href="http://hsienwei.github.io/2018/02/07/struct-between-native-c/"/>
     <id>http://hsienwei.github.io/2018/02/07/struct-between-native-c/</id>
     <published>2018-02-07T02:55:29.000Z</published>
-    <updated>2018-04-05T07:02:53.376Z</updated>
+    <updated>2018-04-05T07:02:53.377Z</updated>
     <content type="html"><![CDATA[<p>目前的專案server端與client端間的共用邏輯是用C++寫的, 而Unity的主要使用程式碼又是c#, 所以有需要從c#呼叫c++端的方法, 以及從c++取資料, 這裡主要整理一下專案用的方法以及遇到的一些問題。<br><a id="more"></a></p>
 <ol>
 <li><p>Windows是編成dll, android是編成.so, ios主要是編成.a</p>
@@ -288,7 +333,7 @@ LeanGesture.GetScreenDelta
     <link href="http://hsienwei.github.io/2017/07/12/UnityEngineAnalyzerTest/"/>
     <id>http://hsienwei.github.io/2017/07/12/UnityEngineAnalyzerTest/</id>
     <published>2017-07-12T02:16:55.000Z</published>
-    <updated>2017-07-30T15:58:37.955Z</updated>
+    <updated>2017-07-30T15:58:37.956Z</updated>
     <content type="html"><![CDATA[<p>今年不同場合的Unity研討會好像都有提到Unity腳本靜態分析的分享，所以心血來潮測試一下Unity Engine Analyzer。  </p>
 <ol>
 <li><p>官方說安裝可以透過NnGet Package Manager搜索來找到，但是就我的狀況直接找是找不到的。<br>因為我的vs2015內建的是<a href="https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/" target="_blank" rel="external">https://www.nuget.org/api/v2/curated-feeds/microsoftdotnet/</a> 這個source<br>需要的話連到<a href="https://www.nuget.org/" target="_blank" rel="external">NuGet首頁</a>可以看到下面有寫新的URL <a href="https://api.nuget.org/v3/index.json" target="_blank" rel="external">https://api.nuget.org/v3/index.json</a><br>改用這個就可以找的到了。  </p>
@@ -344,7 +389,7 @@ LeanGesture.GetScreenDelta
     <link href="http://hsienwei.github.io/2017/06/05/UnityCullingGroup/"/>
     <id>http://hsienwei.github.io/2017/06/05/UnityCullingGroup/</id>
     <published>2017-06-04T17:01:51.000Z</published>
-    <updated>2018-04-05T07:02:53.376Z</updated>
+    <updated>2018-04-05T07:02:53.377Z</updated>
     <content type="html"><![CDATA[<p>以下內容主要來自公司內部分享</p>
 <h1 id="Culling_Group_(Unity)">Culling Group (Unity)</h1><p><a href="https://docs.unity3d.com/Manual/CullingGroupAPI.html" target="_blank" rel="external">link</a><br>該API於Unity 5.1後版本出現<br>主要用於攝影機可見範圍判定<br>個人感覺算是容易使用<br>API中提供距離判定功能, 以長度為主<br>物件在出現與消失, 以及距離段變更會有通知</p>
 <p>主要用他來決定一些特效是否要產出與播放以及當看不到時關閉某些效果<br>主要的考量點還是在能少算就少算  </p>
@@ -396,7 +441,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2017/05/25/DOTweenInUnity/"/>
     <id>http://hsienwei.github.io/2017/05/25/DOTweenInUnity/</id>
     <published>2017-05-25T09:57:33.000Z</published>
-    <updated>2017-05-25T15:33:26.406Z</updated>
+    <updated>2017-05-25T15:33:26.407Z</updated>
     <content type="html"><![CDATA[<p>以下內容為之前在公司分享的東西</p>
 <ul>
 <li><p>目前專案使用的Tween System   </p>
@@ -506,7 +551,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2016/01/24/shader-calculate-help/"/>
     <id>http://hsienwei.github.io/2016/01/24/shader-calculate-help/</id>
     <published>2016-01-24T02:52:25.000Z</published>
-    <updated>2017-05-25T15:33:26.423Z</updated>
+    <updated>2017-05-25T15:33:26.424Z</updated>
     <content type="html"><![CDATA[<p>Formulas for Photoshop blending modes<br>講解一些Blend mode的公式<br><a href="http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html" target="_blank" rel="external">http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html</a></p>
 <p>Photoshop Blendmodi in GLSL<br>同上, 但是主要針對GLSL<br><a href="http://renderingpipeline.com/2012/06/photoshop-blendmodi-glsl/" target="_blank" rel="external">http://renderingpipeline.com/2012/06/photoshop-blendmodi-glsl/</a></p>
 <p>ANDROID LESSON FIVE: AN INTRODUCTION TO BLENDING<br>講解OpenGL中的BlendFunc的計算公式<br><a href="http://www.learnopengles.com/tag/additive-blending/" target="_blank" rel="external">http://www.learnopengles.com/tag/additive-blending/</a></p>
@@ -555,7 +600,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2015/10/03/cocos2dx-skeleton/"/>
     <id>http://hsienwei.github.io/2015/10/03/cocos2dx-skeleton/</id>
     <published>2015-10-03T04:44:37.000Z</published>
-    <updated>2017-05-25T15:33:26.415Z</updated>
+    <updated>2017-05-25T15:33:26.416Z</updated>
     <content type="html"><![CDATA[<p>cocos2d-x上面可用的骨骼動畫方案並不多，列出如下：</p>
 <ul>
 <li><a href="http://zh.esotericsoftware.com/" target="_blank" rel="external">Spine</a><br>一個支援多引擎的骨骼動畫方案，功能強大，支援IK，為骨骼動畫而生。<br>其檔案格式有json與binary兩種，cocos2d-x只支援json檔，這點要注意，有需要的話需要自行寫parser，之前看只有libgdx版本支援binary，現在狀況不太確定。</li>
@@ -579,7 +624,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2015/02/23/cocos2dx-with-wxwidget/"/>
     <id>http://hsienwei.github.io/2015/02/23/cocos2dx-with-wxwidget/</id>
     <published>2015-02-23T01:45:59.000Z</published>
-    <updated>2017-05-25T15:33:26.416Z</updated>
+    <updated>2017-05-25T15:33:26.417Z</updated>
     <content type="html"><![CDATA[<p>最近在研究製作cocos2d-x的編輯器，所以嘗試了一下怎麼跟gui程式庫作結合<br>這篇是測試如何跟wxwidget結合使用的初步測試</p>
 <p>以下測試使用cocos2d-x 3.4 與 wxWidget 3.0.2</p>
 <ol>
@@ -626,7 +671,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2015/02/21/spine-binary2json/"/>
     <id>http://hsienwei.github.io/2015/02/21/spine-binary2json/</id>
     <published>2015-02-20T16:31:40.000Z</published>
-    <updated>2017-05-25T15:33:26.424Z</updated>
+    <updated>2017-05-25T15:33:26.425Z</updated>
     <content type="html"><![CDATA[<p>由於cocos2d-x目前版本(3.4)仍然不能讀取spine 2.0後推出的binary格式(.skel)<br>加上自己沒有購買spine所以不能將binary檔匯入後再輸出為json格式<br>所以嚐試自己弄一個轉換的小工具<br>雖然最後沒有使用<br>但還是記載一下過程</p>
 <hr>
 <p>由於spine官方目前有支援binary的runtime似乎只有libgdx<br>所以下面主要會以參考libgdx的方式來進行</p>
@@ -662,7 +707,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2015/02/20/file-encode-converter/"/>
     <id>http://hsienwei.github.io/2015/02/20/file-encode-converter/</id>
     <published>2015-02-20T15:34:07.000Z</published>
-    <updated>2017-05-25T15:33:26.420Z</updated>
+    <updated>2017-05-25T15:33:26.421Z</updated>
     <content type="html"><![CDATA[<h2 id="原由">原由</h2><p>因為在工作上有需要將一些簡體編碼的程式碼文件轉換成utf格式，所以寫了這個小工具<br>該工具的作用:將目標資料夾下的指定副檔名文件的編碼改為utf<br><strong>注意:目前無備份功能, 轉換前須自行備份</strong></p>
 <hr>
 <h2 id="開發相關">開發相關</h2><p>####開發工具<br><code>python 2.7</code> + <code>chardet</code> + <code>py2exe</code><br>gui部分為內建的<code>tkinter</code><br>py2exe_dist.zip是我自行用py2exe轉換的執行檔<br>如要自行產生請安裝py2exe module以及chardet並在專案目錄下執行<br><code>python setup.py py2exe</code></p>
@@ -686,7 +731,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2014/11/04/unity-autosave/"/>
     <id>http://hsienwei.github.io/2014/11/04/unity-autosave/</id>
     <published>2014-11-03T17:59:58.000Z</published>
-    <updated>2017-05-25T15:33:26.455Z</updated>
+    <updated>2017-05-25T15:33:26.456Z</updated>
     <content type="html"><![CDATA[<p>昨天遇到了一次unity的當機，使得我工作三小時的結果完全消失，查了一下Unity本身沒有自動存檔功能卻能用script作到相同的效果。<br>連結如下：<br><a href="http://www.daikonforge.com/dfgui/save-on-run/" target="_blank" rel="external">http://www.daikonforge.com/dfgui/save-on-run/</a></p>
 ]]></content>
     <summary type="html">
@@ -704,7 +749,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2014/10/29/%E4%BD%BF%E7%94%A8hexo%E8%88%87github%20pages%E8%87%AA%E5%BB%BAblog/"/>
     <id>http://hsienwei.github.io/2014/10/29/使用hexo與github pages自建blog/</id>
     <published>2014-10-29T08:01:25.000Z</published>
-    <updated>2017-05-25T15:33:26.459Z</updated>
+    <updated>2017-05-25T15:33:26.460Z</updated>
     <content type="html"><![CDATA[<h2 id="評估">評估</h2><p>用了一陣子的blogger，其實用起來還滿方便但是看了markdown之後實在很想改用markdown，搜尋了一下有幾個不錯的網路服務像是</p>
 <ul>
 <li>wordpress </li>
@@ -761,7 +806,7 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
     <link href="http://hsienwei.github.io/2014/08/12/Youtube_iframe_%E5%9C%A8%20Apple_TV_%E4%B8%8A%E7%9A%84%E6%92%AD%E6%94%BE%E5%95%8F%E9%A1%8C/"/>
     <id>http://hsienwei.github.io/2014/08/12/Youtube_iframe_在 Apple_TV_上的播放問題/</id>
     <published>2014-08-12T10:04:23.000Z</published>
-    <updated>2017-05-25T15:33:26.413Z</updated>
+    <updated>2017-05-25T15:33:26.414Z</updated>
     <content type="html"><![CDATA[<p><strong>問題：</strong></p>
 <p>有一個頁面使用WebView + Youtube iframe 播放 live channel，在手機上播放正常，但如果使用AirPlay功能cast到Apple TV的話則會出現“ an error occurred loading this content ”。<br>如果播放的是非live則可以正常運行。</p>
 <p><strong>處置：</strong></p>
@@ -785,30 +830,6 @@ group.SetBoundingDistances(<span class="keyword">new</span> <span class="keyword
       <category term="iOS" scheme="http://hsienwei.github.io/tags/iOS/"/>
     
       <category term="youtube" scheme="http://hsienwei.github.io/tags/youtube/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[使用sublime為unity編輯器 in mac之CompleteSharp設定障礙排除]]></title>
-    <link href="http://hsienwei.github.io/2014/06/27/%E4%BD%BF%E7%94%A8sublime%E7%82%BAunity%E7%B7%A8%E8%BC%AF%E5%99%A8inmac%E4%B9%8BCompleteSharp%E8%A8%AD%E5%AE%9A%E9%9A%9C%E7%A4%99%E6%8E%92%E9%99%A4/"/>
-    <id>http://hsienwei.github.io/2014/06/27/使用sublime為unity編輯器inmac之CompleteSharp設定障礙排除/</id>
-    <published>2014-06-26T18:51:40.000Z</published>
-    <updated>2017-05-25T15:33:26.459Z</updated>
-    <content type="html"><![CDATA[<p>標題下得很長<br>基本上是記載依照<a href="http://wiki.unity3d.com/index.php/Using_Sublime_Text_as_a_script_editor的步驟進行時" target="_blank" rel="external">http://wiki.unity3d.com/index.php/Using_Sublime_Text_as_a_script_editor的步驟進行時</a><br>CompleteSharp這個plugin在mac環境上遇到的一些問題</p>
-<ol>
-<li><p>CompleteSharp的安裝<br>個人測試在windows可以用package control直接安裝成功<br>而在mac下會出現Unable to download CompleteSharp的錯誤<br>這時候只能手動安裝<br>有兩種選擇<br>a) clone  <a href="https://github.com/ewilde/CompleteSharp" target="_blank" rel="external">https://github.com/ewilde/CompleteSharp</a> 到 Package資料夾<br>不需其他處理(建議)<br>b) 需事先安裝mono (下載<a href="http://www.go-mono.com/mono-downloads/download.html" target="_blank" rel="external">http://www.go-mono.com/mono-downloads/download.html</a>)<br>clone  <a href="https://github.com/quarnster/CompleteSharp" target="_blank" rel="external">https://github.com/quarnster/CompleteSharp</a> 到 Package資料夾<br>再執行CompleteSharp/build.py</p>
-</li>
-<li><p>CompleteSharp project setting<br>在mac環境中會用到completesharp_mono_path這個參數<br>wiki中寫的completesharp_mono_path是3.x 版時的路徑<br>4.x版可改為如下</p>
-<script src="//gist.github.com/ad4564e649a60996d9b0.js"></script></li>
-</ol>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>標題下得很長<br>基本上是記載依照<a href="http://wiki.unity3d.com/index.php/Using_Sublime_Text_as_a_script_editor的步驟進行時" target="_blank" rel="external">]]>
-    </summary>
-    
-      <category term="sublime" scheme="http://hsienwei.github.io/tags/sublime/"/>
-    
-      <category term="unity" scheme="http://hsienwei.github.io/tags/unity/"/>
     
   </entry>
   

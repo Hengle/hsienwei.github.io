@@ -67,6 +67,53 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-使用cocos2d-x實作PostProcessing" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/12/30/使用cocos2d-x實作PostProcessing/">使用cocos2d-x實作PostProcessing</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2013/12/30/使用cocos2d-x實作PostProcessing/" class="article-date">
+  <time datetime="2013-12-30T09:36:07.000Z" itemprop="datePublished">2013-12-30</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2013/12/30/使用cocos2d-x實作PostProcessing/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上次做了一些想做的shader效果<br>這次主要研究在cocos2d-x上如何實現Post Processing</p>
+<p>主要的參考資料如下<br><a href="http://en.wikibooks.org/wiki/OpenGL_Programming/Post-Processing" target="_blank" rel="external">http://en.wikibooks.org/wiki/OpenGL_Programming/Post-Processing</a></p>
+<p>裡面主要以OpenGL語法來製作，大概步驟如下<br>建立texture<br>建立post processing用的framebuffer<br>將步驟2的framebuffer作為步驟1的texture資料<br>在post processign framebuffer上繪圖<br>將步驟1的texture搭配post processing shader繪圖出來<br>在cocos2d-x中，因為有提供RenderTexture類別，所以我們可以不用處理那麼多步驟。<br>基本上只要建立起RenderTexture，就可以用getSprite()-&gt;getTexture()來取得與步驟1~3相同效果的texture。<br>步驟4則可以藉由在RenderTexture的begin()與end()中加入要繪圖的物件的visit()來達到。<br>而步驟5則只要將取出的texture用來建立新的sprite，並在該sprite上加上shader就可以了。</p>
+<p>下圖為使用cocos2d-x實作上面連結的效果<br>右下有按鈕可以切換是否使用Post Processing<br>程式一樣放在<a href="https://github.com/hsienwei/shader_cocos2dx" target="_blank" rel="external">https://github.com/hsienwei/shader_cocos2dx</a><br><img src="/2013/12/30/使用cocos2d-x實作PostProcessing/effect.png" alt="最後效果"></p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shader/">shader</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-cocos2dx中實作幾個shader效果" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -250,103 +297,6 @@ ga('send', 'pageview');
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-cocos2d-x-mask-作法嘗試" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2013/10/02/cocos2d-x-mask-作法嘗試/">cocos2d-x mask 作法嘗試</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2013/10/02/cocos2d-x-mask-作法嘗試/" class="article-date">
-  <time datetime="2013-10-01T16:41:21.000Z" itemprop="datePublished">2013-10-02</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2013/10/02/cocos2d-x-mask-作法嘗試/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>20151011補:<br>新版本(3.x)用cliping node即可</p>
-<hr>
-<p>這裡指的mask是說一張圖但我要將指定一部分挖掉這樣，我在做的時候都是以一張圖為主圖，另一張mask圖以alpha值指定要挖空的地方</p>
-<p>目前有試過兩種做法</p>
-<h2 id="RenderTexture_+_BlendFunc">RenderTexture + BlendFunc</h2><p>大概程式碼如下</p>
-<pre><code>CCSprite* createMaskSprite()
-{
-    cocos2d::ccBlendFunc bf;
-    bf.src = GL_DST_ALPHA;<span class="comment">//GL_ONE_MINUS_DST_ALPHA;</span>
-    bf.dst = GL_ZERO;
-
-    CCSprite* selfSprite = <span class="comment">/*主圖的sprite*/</span>;
-    CCSprite* maskSprite = <span class="comment">/*mask圖的sprite*/</span>;
-    selfSprite-&gt;setPosition(ccp(selfSprite-&gt;getContentSize().width/<span class="number">2</span>, selfSprite-&gt;getContentSize().height/<span class="number">2</span>));
-    maskSprite-&gt;setPosition(ccp(maskSprite-&gt;getContentSize().width/<span class="number">2</span>, maskSprite-&gt;getContentSize().height/<span class="number">2</span>));
-
-    selfSprite-&gt;setBlendFunc(bf);
-
-    CCRenderTexture *rt = CCRenderTexture::create((<span class="keyword">int</span>)selfSprite-&gt;getContentSize().width, (<span class="keyword">int</span>)selfSprite-&gt;getContentSize().height);
-    rt-&gt;beginWithClear(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
-    maskSprite-&gt;visit();
-    selfSprite-&gt;visit();
-    rt-&gt;end();
-
-    CCSprite *retval = CCSprite::createWithTexture(rt-&gt;getSprite()-&gt;getTexture());
-    retval-&gt;getTexture()-&gt;setAntiAliasTexParameters();
-    retval-&gt;setFlipY(<span class="keyword">true</span>);
-
-    <span class="keyword">return</span> retval;
-}
-</code></pre><p>主要是使用BlendFunc的方法，在RenderTexture畫出想要的效果之後再使用，但如果只直接用BlendFunc可能會被其他的sprite影響產不出想要的效果 </p>
-<h2 id="Shader">Shader</h2><p>Shader程式碼處理起來比較麻煩，建議看cocos2d-x範例程式的shader部分<br>下面是我寫的一個小範例<br><a href="https://github.com/hsienwei/shader_cocos2dx" target="_blank" rel="external">https://github.com/hsienwei/shader_cocos2dx</a></p>
-<p>cocos2d-x的部分主要是參考範例程式改的<br>重要的是shader部分</p>
-<pre><code><span class="preprocessor">#ifdef GL_ES</span>
-<span class="keyword">precision</span> <span class="keyword">mediump</span> <span class="keyword">float</span>;
-<span class="preprocessor">#endif</span>
-
-<span class="keyword">varying</span> <span class="keyword">vec4</span> v_fragmentColor;
-<span class="keyword">varying</span> <span class="keyword">vec2</span> v_texCoord;
-
-<span class="keyword">uniform</span> <span class="keyword">sampler2D</span> u_texture;
-<span class="keyword">uniform</span> <span class="keyword">sampler2D</span> u_mask;
-
-<span class="keyword">void</span> main() {
-    <span class="keyword">vec4</span> mainColor = <span class="built_in">texture2D</span>(u_texture, v_texCoord);
-    <span class="keyword">vec4</span> maskColor = <span class="built_in">texture2D</span>(u_mask, v_texCoord);
-    <span class="keyword">vec4</span> srcColor = <span class="keyword">vec4</span>(mainColor.r * maskColor.a,
-                         mainColor.g * maskColor.a,
-                         mainColor.b * maskColor.a,
-                         mainColor.a * maskColor.a);
-
-    <span class="built_in">gl_FragColor</span> = srcColor;
-}
-</code></pre><p>將主圖的rgba值都乘以mask圖的alpha值即可，要達到這個效果只要動Fragment Shader即可</p>
-
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li></ul>
 
     </footer>
   

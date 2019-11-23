@@ -67,6 +67,54 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-GCM在無該服務的Exception" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/07/08/GCM在無該服務的Exception/">GCM在無該服務的Exception</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2013/07/08/GCM在無該服務的Exception/" class="article-date">
+  <time datetime="2013-07-08T07:04:20.000Z" itemprop="datePublished">2013-07-08</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2013/07/08/GCM在無該服務的Exception/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>問題</strong><br>把目前運行測試正常的檔案送給大陸廠商，卻發現無法進入遊戲</p>
+<p><strong>解答</strong><br>後來弄到了出現問題的手機運行後發現下面的錯誤訊息</p>
+<pre><code>Caused by: java<span class="class">.lang</span><span class="class">.UnsupportedOperationException</span>: Device does not have package com<span class="class">.google</span><span class="class">.android</span><span class="class">.gsf</span>
+E/<span class="function"><span class="title">AndroidRuntime</span><span class="params">( <span class="number">787</span>)</span></span>: at com<span class="class">.google</span><span class="class">.android</span><span class="class">.gcm</span><span class="class">.GCMRegistrar</span><span class="class">.checkDevice</span>(GCMRegistrar<span class="class">.java</span>:<span class="number">98</span>)
+</code></pre><p>須處理沒有該服務時例外狀況</p>
+<p>重點在於大陸手機多沒有google服務<br>所以GCM部分需要處理 UnsupportedOperationException</p>
+<p>所以</p>
+<ol>
+<li>在用google相關服務時須要考慮沒有該服務時的狀況(尤其大陸地區)</li>
+<li>相關服務須要找替代品(金流是很好找  但推播就真的比較少聽過了)</li>
+</ol>
+
+      
+    </div>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-Android問題紀錄" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -379,81 +427,6 @@ NDK_MODULE_PATH=<span class="variable">${COCOS2DX_ROOT}</span>:<span class="vari
     <footer class="article-footer">
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jni/">jni</a></li></ul>
-
-    </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-Android設定寄送夾帶附件的E-mail時附件無法使用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/">Android設定寄送夾帶附件的E-mail時附件無法使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/" class="article-date">
-  <time datetime="2013-04-19T15:01:26.000Z" itemprop="datePublished">2013-04-19</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2013/04/19/Android設定寄送夾帶附件的E-mail時附件無法使用/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="問題起因">問題起因</h3><p>基本上使用常見的方法如下</p>
-<pre><code>Intent i = <span class="keyword">new</span> Intent(Intent.ACTION_SEND);
-i.setType(<span class="string">"image/jpeg"</span>);
-i.putExtra(Intent.EXTRA_EMAIL  , <span class="keyword">new</span> <span class="built_in">String</span>[]{sendTarget});
-i.putExtra(Intent.EXTRA_SUBJECT, sendSubject);
-i.putExtra(Intent.EXTRA_TEXT   , sendText);
-i.putExtra(Intent.EXTRA_STREAM, <span class="built_in">Uri</span>.parse(<span class="string">"file://"</span>+ filePath));
-<span class="keyword">try</span> {
-     curActivity.startActivity(Intent.createChooser(i, <span class="string">"Please select Email client"</span>));
-} <span class="keyword">catch</span> (android.content.ActivityNotFoundException ex) {
-    Toast.makeText(curActivity, <span class="string">"There are no email clients installed."</span>, Toast.LENGTH_SHORT).show();
-}
-</code></pre><p>問題出於我給的是Internal Storage的路徑，所以基本上當其它的應用程式要取用檔案時有有存取權限問題</p>
-<h3 id="解決方式">解決方式</h3><p>copy一份到External Storage再用copy檔的路徑即可</p>
-<pre><code>File externalPicPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-File dstFile = <span class="keyword">new</span> File(externalPicPath, <span class="string">"picture.png"</span>);
-<span class="keyword">try</span>{
-    FileInputStream <span class="keyword">in</span> = <span class="keyword">new</span> FileInputStream(filePath);
-    FileOutputStream <span class="keyword">out</span> = <span class="keyword">new</span> FileOutputStream(dstFile);
-    <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];
-    <span class="keyword">int</span> len;
-    <span class="keyword">while</span> ((len = <span class="keyword">in</span>.read(buf)) &gt; <span class="number">0</span>) {
-        <span class="keyword">out</span>.write(buf, <span class="number">0</span>, len);
-    }
-    <span class="keyword">in</span>.close();
-    <span class="keyword">out</span>.close();
-}
-<span class="keyword">catch</span>(IOException e)
-{
-    Toast.makeText(curActivity, <span class="string">"I/O Error."</span>, Toast.LENGTH_SHORT).show();
-     <span class="keyword">return</span>;
-}
-</code></pre>
-      
-    </div>
-  
-    <footer class="article-footer">
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
 
     </footer>
   

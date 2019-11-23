@@ -67,6 +67,103 @@ ga('send', 'pageview');
   </div>
 </header>
     <section id="main" class="outer">
+      <article id="post-cocos2d-x-mask-作法嘗試" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/10/02/cocos2d-x-mask-作法嘗試/">cocos2d-x mask 作法嘗試</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2013/10/02/cocos2d-x-mask-作法嘗試/" class="article-date">
+  <time datetime="2013-10-01T16:41:21.000Z" itemprop="datePublished">2013-10-02</time>
+</a>
+      
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://hsienwei.github.io/2013/10/02/cocos2d-x-mask-作法嘗試/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>20151011補:<br>新版本(3.x)用cliping node即可</p>
+<hr>
+<p>這裡指的mask是說一張圖但我要將指定一部分挖掉這樣，我在做的時候都是以一張圖為主圖，另一張mask圖以alpha值指定要挖空的地方</p>
+<p>目前有試過兩種做法</p>
+<h2 id="RenderTexture_+_BlendFunc">RenderTexture + BlendFunc</h2><p>大概程式碼如下</p>
+<pre><code>CCSprite* createMaskSprite()
+{
+    cocos2d::ccBlendFunc bf;
+    bf.src = GL_DST_ALPHA;<span class="comment">//GL_ONE_MINUS_DST_ALPHA;</span>
+    bf.dst = GL_ZERO;
+
+    CCSprite* selfSprite = <span class="comment">/*主圖的sprite*/</span>;
+    CCSprite* maskSprite = <span class="comment">/*mask圖的sprite*/</span>;
+    selfSprite-&gt;setPosition(ccp(selfSprite-&gt;getContentSize().width/<span class="number">2</span>, selfSprite-&gt;getContentSize().height/<span class="number">2</span>));
+    maskSprite-&gt;setPosition(ccp(maskSprite-&gt;getContentSize().width/<span class="number">2</span>, maskSprite-&gt;getContentSize().height/<span class="number">2</span>));
+
+    selfSprite-&gt;setBlendFunc(bf);
+
+    CCRenderTexture *rt = CCRenderTexture::create((<span class="keyword">int</span>)selfSprite-&gt;getContentSize().width, (<span class="keyword">int</span>)selfSprite-&gt;getContentSize().height);
+    rt-&gt;beginWithClear(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
+    maskSprite-&gt;visit();
+    selfSprite-&gt;visit();
+    rt-&gt;end();
+
+    CCSprite *retval = CCSprite::createWithTexture(rt-&gt;getSprite()-&gt;getTexture());
+    retval-&gt;getTexture()-&gt;setAntiAliasTexParameters();
+    retval-&gt;setFlipY(<span class="keyword">true</span>);
+
+    <span class="keyword">return</span> retval;
+}
+</code></pre><p>主要是使用BlendFunc的方法，在RenderTexture畫出想要的效果之後再使用，但如果只直接用BlendFunc可能會被其他的sprite影響產不出想要的效果 </p>
+<h2 id="Shader">Shader</h2><p>Shader程式碼處理起來比較麻煩，建議看cocos2d-x範例程式的shader部分<br>下面是我寫的一個小範例<br><a href="https://github.com/hsienwei/shader_cocos2dx" target="_blank" rel="external">https://github.com/hsienwei/shader_cocos2dx</a></p>
+<p>cocos2d-x的部分主要是參考範例程式改的<br>重要的是shader部分</p>
+<pre><code><span class="preprocessor">#ifdef GL_ES</span>
+<span class="keyword">precision</span> <span class="keyword">mediump</span> <span class="keyword">float</span>;
+<span class="preprocessor">#endif</span>
+
+<span class="keyword">varying</span> <span class="keyword">vec4</span> v_fragmentColor;
+<span class="keyword">varying</span> <span class="keyword">vec2</span> v_texCoord;
+
+<span class="keyword">uniform</span> <span class="keyword">sampler2D</span> u_texture;
+<span class="keyword">uniform</span> <span class="keyword">sampler2D</span> u_mask;
+
+<span class="keyword">void</span> main() {
+    <span class="keyword">vec4</span> mainColor = <span class="built_in">texture2D</span>(u_texture, v_texCoord);
+    <span class="keyword">vec4</span> maskColor = <span class="built_in">texture2D</span>(u_mask, v_texCoord);
+    <span class="keyword">vec4</span> srcColor = <span class="keyword">vec4</span>(mainColor.r * maskColor.a,
+                         mainColor.g * maskColor.a,
+                         mainColor.b * maskColor.a,
+                         mainColor.a * maskColor.a);
+
+    <span class="built_in">gl_FragColor</span> = srcColor;
+}
+</code></pre><p>將主圖的rgba值都乘以mask圖的alpha值即可，要達到這個效果只要動Fragment Shader即可</p>
+
+      
+    </div>
+  
+    <footer class="article-footer">
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li></ul>
+
+    </footer>
+  
+  </div>
+  
+</article>
+
+
+    
       <article id="post-parse-html-to-json" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -293,54 +390,6 @@ I/DEBUG (13020): #01 pc 00521dfa /data/data/xxx.xxxxxx.xxxx/lib/libgame.so (_ZN2
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cocos2d-x/">cocos2d-x</a></li></ul>
 
     </footer>
-  
-  </div>
-  
-</article>
-
-
-    
-      <article id="post-GCM在無該服務的Exception" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2013/07/08/GCM在無該服務的Exception/">GCM在無該服務的Exception</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2013/07/08/GCM在無該服務的Exception/" class="article-date">
-  <time datetime="2013-07-08T07:04:20.000Z" itemprop="datePublished">2013-07-08</time>
-</a>
-      
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://hsienwei.github.io/2013/07/08/GCM在無該服務的Exception/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>問題</strong><br>把目前運行測試正常的檔案送給大陸廠商，卻發現無法進入遊戲</p>
-<p><strong>解答</strong><br>後來弄到了出現問題的手機運行後發現下面的錯誤訊息</p>
-<pre><code>Caused by: java<span class="class">.lang</span><span class="class">.UnsupportedOperationException</span>: Device does not have package com<span class="class">.google</span><span class="class">.android</span><span class="class">.gsf</span>
-E/<span class="function"><span class="title">AndroidRuntime</span><span class="params">( <span class="number">787</span>)</span></span>: at com<span class="class">.google</span><span class="class">.android</span><span class="class">.gcm</span><span class="class">.GCMRegistrar</span><span class="class">.checkDevice</span>(GCMRegistrar<span class="class">.java</span>:<span class="number">98</span>)
-</code></pre><p>須處理沒有該服務時例外狀況</p>
-<p>重點在於大陸手機多沒有google服務<br>所以GCM部分需要處理 UnsupportedOperationException</p>
-<p>所以</p>
-<ol>
-<li>在用google相關服務時須要考慮沒有該服務時的狀況(尤其大陸地區)</li>
-<li>相關服務須要找替代品(金流是很好找  但推播就真的比較少聽過了)</li>
-</ol>
-
-      
-    </div>
   
   </div>
   
